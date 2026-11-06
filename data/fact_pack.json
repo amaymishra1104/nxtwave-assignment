@@ -1,0 +1,86 @@
+[
+  {
+    "id": "fact_01",
+    "fact": "RAG combines pre-trained parametric memory (the transformer neural network weights) with non-parametric memory (an external dense vector index of text passages).",
+    "source_name": "Lewis et al. (2020) - Retrieval-Augmented Generation for Knowledge-Intensive NLP Tasks (NeurIPS 2020)",
+    "source_url": "https://arxiv.org/abs/2005.11401",
+    "category": "architecture"
+  },
+  {
+    "id": "fact_02",
+    "fact": "In standard RAG inference, the external knowledge can be updated, expanded, or replaced without modifying, retraining, or fine-tuning the underlying model weights.",
+    "source_name": "Lewis et al. (2020) - arXiv:2005.11401 Section 1",
+    "source_url": "https://arxiv.org/abs/2005.11401",
+    "category": "weights_and_training"
+  },
+  {
+    "id": "fact_03",
+    "fact": "RAG significantly reduces factual hallucinations on knowledge-intensive tasks compared to pure parametric generation by grounding answers in retrieved source text.",
+    "source_name": "Lewis et al. (2020) - arXiv:2005.11401 Section 4",
+    "source_url": "https://arxiv.org/abs/2005.11401",
+    "category": "hallucination"
+  },
+  {
+    "id": "fact_04",
+    "fact": "Dense Passage Retrieval (DPR) uses neural bi-encoders to convert text queries and document passages into continuous dense vector representations for similarity search.",
+    "source_name": "Karpukhin et al. (2020) / Lewis et al. (2020) Section 2.1",
+    "source_url": "https://arxiv.org/abs/2004.04906",
+    "category": "retrieval"
+  },
+  {
+    "id": "fact_05",
+    "fact": "Lewis et al. formulated two RAG variants: RAG-Sequence (uses the same retrieved passages for the entire generated response) and RAG-Token (can select different passages for each generated token).",
+    "source_name": "Lewis et al. (2020) - arXiv:2005.11401 Section 2.2",
+    "source_url": "https://arxiv.org/abs/2005.11401",
+    "category": "architecture"
+  },
+  {
+    "id": "fact_06",
+    "fact": "Document chunking breaks large source files into smaller semantic pieces so passages fit within the LLM context window and preserve retrieval precision.",
+    "source_name": "LangChain Conceptual Documentation - Text Splitters",
+    "source_url": "https://python.langchain.com/docs/concepts/text_splitters/",
+    "category": "chunking"
+  },
+  {
+    "id": "fact_07",
+    "fact": "Embeddings are dense numerical vectors representing the semantic meaning of text chunks, allowing distance metrics like cosine similarity to find topical matches.",
+    "source_name": "Google Cloud Generative AI - Text Embeddings Guide",
+    "source_url": "https://cloud.google.com/vertex-ai/docs/generative-ai/embeddings/get-text-embeddings",
+    "category": "embeddings"
+  },
+  {
+    "id": "fact_08",
+    "fact": "A vector database indexes high-dimensional embeddings to perform fast approximate nearest neighbor (ANN) search across millions of text chunks.",
+    "source_name": "Pinecone Learning Center - What is a Vector Database?",
+    "source_url": "https://www.pinecone.io/learn/vector-database/",
+    "category": "vector_database"
+  },
+  {
+    "id": "fact_09",
+    "fact": "In prompt augmentation, the most relevant retrieved passages are appended directly into the prompt along with the user's question before generation.",
+    "source_name": "Hugging Face Transformers Documentation - RAG Models",
+    "source_url": "https://huggingface.co/docs/transformers/model_doc/rag",
+    "category": "prompt_augmentation"
+  },
+  {
+    "id": "fact_10",
+    "fact": "RAG has limitations: if retrieval fails to find the correct document chunk, the generator cannot provide the right answer (retrieval bottleneck), and retrieval introduces latency.",
+    "source_name": "Lewis et al. (2020) Section 5 & AWS Architecture Center",
+    "source_url": "https://aws.amazon.com/blogs/machine-learning/question-answering-using-retrieval-augmented-generation/",
+    "category": "limitations"
+  },
+  {
+    "id": "fact_11",
+    "fact": "RAG provides direct source provenance and citations because the model references the explicit external documents used during generation.",
+    "source_name": "Lewis et al. (2020) - arXiv:2005.11401 Section 4.5",
+    "source_url": "https://arxiv.org/abs/2005.11401",
+    "category": "provenance"
+  },
+  {
+    "id": "fact_12",
+    "fact": "Decoupling static language generation from external knowledge stores makes RAG substantially cheaper and more agile than continuous full-model retraining.",
+    "source_name": "Meta AI Engineering Blog - Retrieval-Augmented Generation",
+    "source_url": "https://ai.meta.com/blog/retrieval-augmented-generation-streamlining-the-creation-of-intelligent-natural-language-processing-models/",
+    "category": "cost_and_efficiency"
+  }
+]
