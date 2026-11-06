@@ -1,0 +1,74 @@
+{
+  "version": "2.0.0-proposed",
+  "generated_at": "2026-11-06T19:25:49.136096",
+  "proposed_by": "ReflectorNode",
+  "changelog": [
+    "Initial proposal incorporating stricter evidence verification and glossary definition cues."
+  ],
+  "historical_failure_statistics": {},
+  "active_learned_rules_applied": [],
+  "name": "Lesson Quality & Pedagogy Rubric for Beginner Learners (v2 Proposed)",
+  "description": "10 hard pass/fail checkpoints ensuring pedagogical clarity, accessibility, and strict factual correctness for Indian 12th-grade graduates starting AI careers. [Evolved via Self-Reflection]",
+  "checks": [
+    {
+      "id": "accuracy",
+      "name": "Factual Accuracy & Grounding",
+      "type": "llm",
+      "description": "Zero statements contradict verified facts in data/fact_pack.json. The lesson must never state or suggest that RAG retrains, updates, or modifies the weights of the foundation language model."
+    },
+    {
+      "id": "what_why_how",
+      "name": "Covers What, Why, and How",
+      "type": "llm",
+      "description": "The lesson explicitly and thoroughly answers: (1) What RAG is, (2) Why it matters and why basic LLMs fall short without it, and (3) How the RAG pipeline works step by step."
+    },
+    {
+      "id": "key_points",
+      "name": "Covers All 8 Key Technical Concepts",
+      "type": "llm",
+      "description": "The lesson covers all 8 core concepts: retrieval, embeddings, vector database, chunking, augmenting the prompt, generation, hallucination reduction, and limitations."
+    },
+    {
+      "id": "jargon_defined",
+      "name": "Technical Jargon Defined at First Use",
+      "type": "hybrid",
+      "description": "Every technical or specialized term from the glossary that appears in the lesson is defined in plain, intuitive language at the very point of its first introduction before being used again."
+    },
+    {
+      "id": "reading_level",
+      "name": "Accessible Reading Level",
+      "type": "code",
+      "description": "Flesch-Kincaid Grade Level must be 7.0 or below AND average sentence length must be 15.0 words or fewer, calculated on clean prose with markdown syntax stripped."
+    },
+    {
+      "id": "no_idioms",
+      "name": "No Confusing Idioms or Slang",
+      "type": "llm",
+      "description": "The lesson contains zero Western idioms, buzzwords, or colloquial phrases (e.g., 'hit the ground running', 'bite the bullet', 'silver bullet') that would confuse a non-English-medium student."
+    },
+    {
+      "id": "worked_example",
+      "name": "India-Relevant Worked Example",
+      "type": "llm",
+      "description": "Includes at least one concrete, step-by-step worked example familiar to an Indian student (e.g., a college admission chatbot looking up an exam circular or fee deadline PDF)."
+    },
+    {
+      "id": "analogy",
+      "name": "Everyday Intuitive Analogy",
+      "type": "llm",
+      "description": "Contains at least one intuitive everyday analogy to anchor comprehension (such as comparing a student taking an open-book exam with reference textbooks to a closed-book memory exam)."
+    },
+    {
+      "id": "coherent_flow",
+      "name": "Coherent Pedagogical Flow",
+      "type": "llm",
+      "description": "Concepts follow a logical learning progression where foundational concepts (e.g., chunks and embeddings) are explained before advanced mechanisms (e.g., vector search and prompt augmentation)."
+    },
+    {
+      "id": "wrap_up",
+      "name": "Summary & Exactly 3 Self-Check Questions",
+      "type": "hybrid",
+      "description": "The lesson concludes with a concise key takeaway summary and exactly three numbered self-check questions inside the self-check section that test understanding without trick questions."
+    }
+  ]
+}

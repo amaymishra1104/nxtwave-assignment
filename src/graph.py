@@ -12,6 +12,7 @@ from src.nodes.evaluator import evaluator_node
 from src.nodes.generator import generator_node
 from src.nodes.grounder import grounder_node
 from src.nodes.planner import planner_node
+from src.nodes.reflector import reflector_node
 from src.nodes.reviser import reviser_node
 from src.nodes.router import route_after_evaluation
 from src.schemas import LessonState
@@ -20,10 +21,10 @@ logger = logging.getLogger(__name__)
 
 
 def build_lesson_graph(client: Optional[genai.Client] = None):
-    """Compile the LangGraph cyclic workflow: Grounder -> Planner -> Generator -> Evaluator -> (Reviser -> Evaluator)* -> END."""
+    """Compile the LangGraph cyclic workflow: Grounder -> Planner -> Generator -> Evaluator -> (Reviser -> Evaluator)* -> Reflector -> END."""
     workflow = StateGraph(LessonState)
 
-    # Node wrappers passing optional client
+    # Nodes
     workflow.add_node("grounder", grounder_node)
     workflow.add_node("planner", lambda state: planner_node(state, client=client))
     workflow.add_node(
@@ -33,6 +34,7 @@ def build_lesson_graph(client: Optional[genai.Client] = None):
         "evaluator", lambda state: evaluator_node(state, client=client)
     )
     workflow.add_node("reviser", lambda state: reviser_node(state, client=client))
+    workflow.add_node("reflector", reflector_node)
 
     # Linear entry flow
     workflow.add_edge(START, "grounder")
@@ -46,12 +48,15 @@ def build_lesson_graph(client: Optional[genai.Client] = None):
         route_after_evaluation,
         {
             "reviser": "reviser",
-            "ship": END,
+            "ship": "reflector",
         },
     )
 
     # Loop reviser back to evaluator
     workflow.add_edge("reviser", "evaluator")
+
+    # Reflector leads to END
+    workflow.add_edge("reflector", END)
 
     return workflow.compile()
 

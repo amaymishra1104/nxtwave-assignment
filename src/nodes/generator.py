@@ -115,13 +115,28 @@ def generator_node(
 
     lesson_text = response.text.strip()
 
+    # Optional Fault Injection hook on Attempt 0 for live demonstration (Amendment 5)
+    injected_fault = None
+    if state.fault_to_inject and state.current_attempt == 0:
+        from src.fault_injector import inject_fault
+
+        lesson_text = inject_fault(
+            lesson_text=lesson_text,
+            fault_type=state.fault_to_inject,
+            client=client,
+        )
+        injected_fault = state.fault_to_inject
+        logger.info(f"Deliberately injected fault '{injected_fault}' into Attempt 0.")
+
     # Create new attempt record
     attempt = LessonAttempt(
         attempt_number=state.current_attempt,
         content=lesson_text,
+        fault_injected=injected_fault,
     )
 
     return {
         "attempts": state.attempts + [attempt],
         "final_lesson": lesson_text,
     }
+

@@ -64,11 +64,50 @@ def main():
         print(f"Fault Hook:  {args.inject_fault} (Attempt 0)")
     print("=======================================================\n")
 
-    initial_state = LessonState(
-        topic=args.topic,
-        max_retries=args.max_retries,
-        fault_to_inject=args.inject_fault,
-    )
+    if args.demo_evolution:
+        print("\n>>> DEMO EVOLUTION MODE ACTIVATED (Amendment 9) <<<")
+        print("Running 3 sequential iterations to demonstrate rule synthesis, persistence, and prompt injection.\n")
+
+        from src.memory.store import MemoryStore
+        store = MemoryStore()
+
+        for iteration in range(1, 4):
+            print(f"\n=======================================================")
+            print(f"            EVOLUTION RUN {iteration} OF 3")
+            print(f"=======================================================")
+
+            # Check rules before run
+            active_rules_before = store.get_top_active_rules(limit=5)
+            print(f"[Run {iteration}] Active Rules Loaded from Memory ({len(active_rules_before)}):")
+            for r in active_rules_before:
+                print(f"  * {r}")
+            if not active_rules_before:
+                print("  (None yet - cold start)")
+
+            state = LessonState(
+                topic=args.topic,
+                max_retries=1,  # Keep attempts fast for demo
+                fault_to_inject="hallucination" if iteration == 1 else None,
+            )
+
+            final_state_dict = graph.invoke(state)
+            final_state = LessonState(**final_state_dict) if isinstance(final_state_dict, dict) else final_state_dict
+            save_run_outputs(final_state)
+
+            # Check rules after run
+            active_rules_after = store.get_top_active_rules(limit=5)
+            print(f"\n[Run {iteration} Finished] Memory Updated:")
+            print(f"  Total Attempts: {len(final_state.attempts)}")
+            print(f"  Active Rules in Memory Now ({len(active_rules_after)}):")
+            for r in active_rules_after:
+                print(f"  + {r}")
+
+        print("\n=======================================================")
+        print("        DEMO EVOLUTION COMPLETED SUCCESSFULLY")
+        print(f"Active Rules Capped at 5 (Deduplicated)")
+        print(f"Proposed Rubric: {settings.rubric_v2_proposed_path}")
+        print("=======================================================\n")
+        return
 
     graph = build_lesson_graph()
 
@@ -123,3 +162,4 @@ def main():
 
 if __name__ == "__main__":
     main()
+

@@ -13,6 +13,7 @@ from src.schemas import (
     LessonAttempt,
     LessonPlan,
     LessonState,
+    WhatWhyHow,
 )
 
 
@@ -169,11 +170,11 @@ def test_mocked_end_to_end_graph_execution():
     # Planner response
     plan_mock = LessonPlan(
         topic="Introduction to RAG",
-        what_why_how={
-            "what": "What is RAG",
-            "why": "Why it matters",
-            "how": "How it works",
-        },
+        what_why_how=WhatWhyHow(
+            what="What is RAG",
+            why="Why it matters",
+            how="How it works",
+        ),
         key_concepts=[
             "retrieval",
             "embeddings",
@@ -273,3 +274,4 @@ def test_mocked_end_to_end_graph_execution():
     assert len(final_state.attempts) == 1
     assert final_state.status == "passed"
     assert final_state.attempts[0].evaluation.passed is True
+

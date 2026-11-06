@@ -15,13 +15,19 @@ class LearnerProfile(BaseModel):
     aspiration: str = "Wants to start an AI career"
 
 
+class WhatWhyHow(BaseModel):
+    """Core breakdown of what RAG is, why it matters, and how it works."""
+
+    what: str = Field(description="What RAG is in simple words")
+    why: str = Field(description="Why RAG matters and why standard LLMs fall short")
+    how: str = Field(description="How the RAG pipeline operates step by step")
+
+
 class LessonPlan(BaseModel):
     """Structured outline produced by the Planner node."""
 
     topic: str
-    what_why_how: Dict[str, str] = Field(
-        description="Core breakdown of what RAG is, why it matters, and how it works"
-    )
+    what_why_how: WhatWhyHow
     key_concepts: List[str] = Field(
         description="The 8 mandatory concepts: retrieval, embeddings, vector database, chunking, augmenting the prompt, generation, hallucination reduction, limitations"
     )
@@ -122,3 +128,4 @@ class LessonState(BaseModel):
         if not valid_attempts:
             return self.attempts[-1]
         return min(valid_attempts, key=lambda a: a.evaluation.fail_count)
+
