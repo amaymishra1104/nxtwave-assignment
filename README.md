@@ -11,6 +11,74 @@
 
 ---
 
+## Executive Pipeline Overview
+
+```mermaid
+flowchart TD
+    subgraph Inputs["1. Immutable Grounding & Memory"]
+        Topic["Topic Input: Introduction to RAG"]
+        Facts["Lewis et al. Fact Pack (Verified NeurIPS Data)"]
+        Glossary["12-Term Canonical Glossary"]
+        Memory["Top 5 Active Learned Rules (SQLite)"]
+    end
+
+    subgraph Drafting["2. Pedagogical Curriculum Drafting"]
+        Planner["PlannerNode: Curriculum Checklist (What / Why / How)"]
+        Generator["GeneratorNode: Plain-Language Drafter (Indian 12th-Grade Persona)"]
+    end
+
+    subgraph Evaluation["3. Two-Tier Hybrid Quality Gate"]
+        CodeChecks["Deterministic Code Engine: Reading Level <= 7.0, Sentences <= 15 Words, Glossary Definitions"]
+        LLMJudge["Gemini LLM Judge: Factual Accuracy, Indian Worked Example, Analogies, No Idioms"]
+    end
+
+    subgraph Remediation["4. Surgical Self-Correction Loop"]
+        Router{"Quality Gate: All 10 Checks Passed?"}
+        Reviser["ReviserNode: Surgical Remediation (Patches offending text via verbatim quotes)"]
+    end
+
+    subgraph Certification["5. Publication & Meta-Evolution"]
+        Published["Certified Lesson: outputs/lesson.md"]
+        UI["Interactive Dashboards: Web UI & Rich CLI"]
+        Reflector["ReflectorNode: SQLite Telemetry & Rubric v2 Proposal"]
+    end
+
+    Topic --> Planner
+    Facts --> Planner
+    Glossary --> Planner
+    Memory --> Generator
+
+    Planner --> Generator
+    Generator --> CodeChecks
+    Generator --> LLMJudge
+
+    CodeChecks --> Router
+    LLMJudge --> Router
+
+    Router -- "Fail (Retries < 2)" --> Reviser
+    Reviser -. "Re-Evaluate Draft" .-> CodeChecks
+    Reviser -. "Re-Evaluate Draft" .-> LLMJudge
+
+    Router -- "All 10 Pass (or Retries >= 2)" --> Reflector
+    Reflector --> Published
+    Reflector --> UI
+    Reflector --> Memory
+
+    classDef ground fill:#0f172a,stroke:#38bdf8,stroke-width:1.5px,color:#f8fafc;
+    classDef draft fill:#1e293b,stroke:#818cf8,stroke-width:1.5px,color:#f8fafc;
+    classDef eval fill:#311042,stroke:#c084fc,stroke-width:1.5px,color:#f8fafc;
+    classDef loop fill:#431407,stroke:#fb923c,stroke-width:1.5px,color:#f8fafc;
+    classDef out fill:#064e3b,stroke:#34d399,stroke-width:1.5px,color:#f8fafc;
+
+    class Topic,Facts,Glossary,Memory ground;
+    class Planner,Generator draft;
+    class CodeChecks,LLMJudge eval;
+    class Router,Reviser loop;
+    class Published,UI,Reflector out;
+```
+
+---
+
 ## 1. Problem & Mission
 
 Teaching complex Generative AI concepts to beginner audiences is notoriously prone to three systemic failure modes:
