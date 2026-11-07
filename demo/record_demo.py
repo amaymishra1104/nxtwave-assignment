@@ -707,6 +707,11 @@ def main():
         help="Auto-advance prompts without waiting for user Enter key (for automation/tests)",
     )
     parser.add_argument(
+        "--auto",
+        action="store_true",
+        help="Automatically advance takes without waiting for Enter key (for automated video recording)",
+    )
+    parser.add_argument(
         "--headless",
         action="store_true",
         help="Run browser in headless mode",
@@ -720,11 +725,12 @@ def main():
         sys.exit(0 if passed else 1)
 
     # Browser walkthrough
+    is_auto = args.auto or args.non_interactive
     if args.browser:
         run_browser_walkthrough(
             pause_sec=4.0,
             headless=args.headless,
-            non_interactive=args.non_interactive,
+            non_interactive=is_auto,
         )
         sys.exit(0)
 
@@ -760,7 +766,7 @@ def main():
 
     try:
         for seg in segments_to_run:
-            print_title_card(seg, non_interactive=args.non_interactive)
+            print_title_card(seg, non_interactive=is_auto)
             seg_start_offset = time.time() - session_start_time
 
             if seg["id"] == "4":
@@ -814,7 +820,7 @@ def main():
             timeline_path.write_text("\n".join(timeline_lines) + "\n", encoding="utf-8")
 
             results.append({"seg": seg, "duration": dur, "status": status_res})
-            print_complete_card(seg, dur, status_res, non_interactive=args.non_interactive)
+            print_complete_card(seg, dur, status_res, non_interactive=is_auto)
 
     finally:
         if log_fp:

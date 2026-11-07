@@ -1,0 +1,5 @@
+# Automated Demo Recording Session Timeline
+# Session Start: 2026-11-07 23:08:16
+# Format: Segment <id>: <name> | File: <filename> | Start: MM:SS | Duration: MM:SS | Status: <status>
+
+Segment 5: Safe fallback replays | File: segment5_20261107_230816.mp4 | Start: 00:00 | Duration: 01:05 | Status: ok

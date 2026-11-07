@@ -98,4 +98,27 @@ python demo/record_demo.py --browser
 - `--check`: Run pre-flight checks and display the budget table without making API calls.
 - `--browser`: Run automated browser walkthrough of `outputs/view.html`.
 - `--non-interactive`: Auto-advance title cards without waiting for Enter (for CI or automated testing).
+- `--auto`: Automatically advance takes without waiting for Enter key.
+
+---
+
+## 4. Automatic Video Recording (`demo/auto_record.py`)
+
+Produces real video files (`.mp4` or `.webm`) of terminal execution without manual Enter prompts:
+
+```bash
+# Record segment 5 with real desktop terminal capture (FFmpeg)
+python demo/auto_record.py --segment 5 --mode ffmpeg
+
+# Record segment 5 via styled browser fallback (Playwright, no FFmpeg needed)
+python demo/auto_record.py --segment 5 --mode browser
+
+# Record all segments unattended with countdown
+python demo/auto_record.py --segment all --countdown 5 --pause 3
+```
+
+- **Output Directory**: Saved to `demo/videos/segment<N>_<timestamp>.mp4` (gitignored).
+- **Graceful Finalization**: Sends `q` to FFmpeg stdin to finalize video headers cleanly.
+- **Timeline Integration**: Appends each recorded video file and duration to `demo/logs/timeline_<timestamp>.txt`.
 - `--headless`: Run the browser walkthrough in headless mode.
+

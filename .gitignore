@@ -47,3 +47,9 @@ htmlcov/
 # Run logs
 outputs/runs/
 
+# Demo videos
+demo/videos/
+*.mp4
+*.webm
+demo/logs/terminal_stream_*.html
+
