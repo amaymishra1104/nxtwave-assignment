@@ -109,6 +109,12 @@ def main():
         print("=======================================================\n")
         return
 
+    initial_state = LessonState(
+        topic=args.topic,
+        max_retries=args.max_retries,
+        fault_to_inject=args.inject_fault,
+    )
+
     graph = build_lesson_graph()
 
     logger.info("Starting autonomous LangGraph execution...")

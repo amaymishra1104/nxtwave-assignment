@@ -70,3 +70,4 @@ The AI model reads the question and facts together to generate the answer.
 1. What is the open-book exam analogy?
 2. Does RAG retrain the model weights?
 3. What is chunking?
+

@@ -80,3 +80,4 @@ Rahul types a question into the college website chatbot:
 1. What does RAG stand for?
 2. What is chunking?
 3. What is a vector database?
+

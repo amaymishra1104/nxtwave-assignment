@@ -84,3 +84,4 @@ def inject_fault(
     else:
         logger.warning(f"Unknown fault type '{fault_type}'; no fault injected.")
         return lesson_text
+

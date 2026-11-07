@@ -1,12 +1,28 @@
 {
   "version": "2.0.0-proposed",
-  "generated_at": "2026-11-06T19:25:49.136096",
+  "generated_at": "2026-11-07T12:38:19.657958",
   "proposed_by": "ReflectorNode",
   "changelog": [
-    "Initial proposal incorporating stricter evidence verification and glossary definition cues."
+    "Enhanced jargon_defined criteria based on 8 historical occurrences: terms must be defined in the same initial clause."
   ],
-  "historical_failure_statistics": {},
-  "active_learned_rules_applied": [],
+  "historical_failure_statistics": {
+    "jargon_defined": 8,
+    "wrap_up": 7,
+    "worked_example": 3,
+    "what_why_how": 3,
+    "no_idioms": 3,
+    "key_points": 3,
+    "coherent_flow": 3,
+    "analogy": 3,
+    "accuracy": 3
+  },
+  "active_learned_rules_applied": [
+    "Conclude the lesson with a key summary and exactly three numbered questions in the Self-Check section.",
+    "Define every specialized term (e.g. embeddings, chunking, vector database) with simple words right inside the first sentence it is introduced.",
+    "Use strictly literal language. Avoid all colloquial phrases or English idioms such as 'from scratch', 'silver bullet', or 'bite the bullet'.",
+    "Provide a concrete 3-step walkthrough set in an Indian college (e.g. a student asking an admission chatbot about an exam notice PDF).",
+    "Explicitly clarify that RAG does NOT retrain or alter model weights; the base model stays completely frozen while external text is fetched."
+  ],
   "name": "Lesson Quality & Pedagogy Rubric for Beginner Learners (v2 Proposed)",
   "description": "10 hard pass/fail checkpoints ensuring pedagogical clarity, accessibility, and strict factual correctness for Indian 12th-grade graduates starting AI careers. [Evolved via Self-Reflection]",
   "checks": [

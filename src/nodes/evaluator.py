@@ -41,7 +41,7 @@ def evaluator_node(
     )
 
     # 1. Deterministic Checks
-    det_reading = check_reading_level(lesson_text)
+    det_reading = check_reading_level(lesson_text, glossary=state.glossary)
     det_glossary = check_glossary_coverage(lesson_text, state.glossary)
     det_structure = check_required_structure(lesson_text)
     det_quiz = check_quiz_structure(lesson_text, required_count=3)
@@ -222,3 +222,4 @@ def evaluator_node(
         "status": new_status,
         "final_lesson": lesson_text if evaluation_result.passed else state.final_lesson,
     }
+

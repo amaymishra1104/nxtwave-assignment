@@ -70,3 +70,4 @@ Rahul types a question into the college website chatbot:
 1. What is the difference between a closed-book test and RAG?
 2. What does augment mean in RAG?
 3. Does RAG retrain the model weights?
+

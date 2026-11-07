@@ -11,6 +11,7 @@ from typing import Any, Dict, Optional
 from google import genai
 from google.genai import types
 
+from src.checks.llm_judge import call_gemini_with_backoff
 from src.config import settings
 from src.schemas import LessonAttempt, LessonState
 
@@ -58,10 +59,13 @@ def build_generator_prompt(state: LessonState) -> str:
 - Aspires to start an AI career and needs clear mental models.
 
 ### PEDAGOGICAL REQUIREMENTS:
-1. Tone & Style:
-   - Write in simple, clear, and beginner-friendly English.
-   - Keep sentences short, crisp, and direct. Avoid long, complicated compound sentences.
-   - Never use Western idioms, colloquialisms, or buzzwords (e.g., avoid "bite the bullet", "hit the ground running", "silver bullet").
+1. Tone & Style Rules (CRITICAL FOR BEGINNER ACCESSIBILITY):
+   - One idea per sentence: Express only one single thought per sentence. Never pack multiple concepts, actions, or steps into one sentence.
+   - Short sentences: Keep sentences short, crisp, and direct. Use full stops often.
+   - Everyday words: Use simple, familiar high-school words. Avoid complex, formal, or multi-syllable vocabulary (e.g. use "college office" instead of "university administration", "check" instead of "verification", "math numbers" instead of "mathematical calculations", "standard" instead of "traditional").
+   - No long chains of clauses: Never connect multiple ideas using conjunctions like "and", "which", "while", "whereas", or "consequently". Break them into separate standalone sentences.
+   - Explain each new term in a short separate sentence: When you first introduce any new technical term, immediately follow it with a short, standalone sentence that explains what it means in plain words before continuing.
+   - Beginner-friendly language: Never use Western idioms, colloquialisms, or buzzwords (e.g., avoid "bite the bullet", "hit the ground running", "silver bullet").
 2. Core Content:
    - Thoroughly explain: (1) What RAG is, (2) Why standard AI models need it (knowledge limits and hallucinations), and (3) How it works.
    - Explain all of these essential concepts: {concepts_str}.
@@ -103,17 +107,13 @@ def generator_node(
 
     prompt = build_generator_prompt(state)
 
-    config = types.GenerateContentConfig(
-        temperature=settings.generator_temperature,
-    )
-
-    response = client.models.generate_content(
+    lesson_text = call_gemini_with_backoff(
+        client=client,
         model=settings.generator_model,
-        contents=prompt,
-        config=config,
-    )
-
-    lesson_text = response.text.strip()
+        prompt=prompt,
+        schema=None,
+        temperature=settings.generator_temperature,
+    ).strip()
 
     # Optional Fault Injection hook on Attempt 0 for live demonstration (Amendment 5)
     injected_fault = None

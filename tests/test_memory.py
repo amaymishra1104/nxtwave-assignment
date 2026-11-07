@@ -121,3 +121,4 @@ def test_reflector_node_generates_rubric_v2_with_changelog(tmp_path, monkeypatch
     assert "changelog" in proposed_json
     assert len(proposed_json["changelog"]) > 0
     assert "historical_failure_statistics" in proposed_json
+

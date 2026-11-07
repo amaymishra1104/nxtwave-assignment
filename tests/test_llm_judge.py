@@ -237,3 +237,4 @@ def test_live_gemini_judge_call():
     assert len(results) >= 7
     # All checks should pass on golden lesson
     assert all(r.passed for r in results)
+

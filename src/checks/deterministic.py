@@ -32,8 +32,14 @@ def strip_markdown(text: str) -> str:
     cleaned = re.sub(r"!\[[^\]]*\]\([^)]*\)", " ", cleaned)
     # Replace links [text](url) with text
     cleaned = re.sub(r"\[([^\]]+)\]\([^)]*\)", r"\1", cleaned)
-    # Remove header markings (# Header -> Header)
-    cleaned = re.sub(r"^\s*#{1,6}\s+", "", cleaned, flags=re.MULTILINE)
+    # Punctuate headings before stripping marks so they aren't merged with subsequent prose
+    def _punctuate_heading(m):
+        h = m.group(1).strip()
+        if h and h[-1] not in ".!?:":
+            return h + "."
+        return h
+
+    cleaned = re.sub(r"^\s*#{1,6}\s+(.+)$", _punctuate_heading, cleaned, flags=re.MULTILINE)
     # Remove bullet markers (*, -, +)
     cleaned = re.sub(r"^\s*[-*+]\s+", "", cleaned, flags=re.MULTILINE)
     # Remove numbered list prefixes (1. , 2. )
@@ -61,8 +67,8 @@ def calculate_sentence_metrics(text: str) -> Tuple[float, int, int]:
     if not clean_text:
         return 0.0, 0, 0
 
-    # Split into sentences using terminal punctuation
-    raw_sentences = re.split(r"(?<=[.!?])\s+", clean_text)
+    # Split into sentences using terminal punctuation or line breaks
+    raw_sentences = re.split(r"(?<=[.!?])\s+|\n+", clean_text)
     # Filter out empty or whitespace-only sentences
     sentences = [s.strip() for s in raw_sentences if re.search(r"\w+", s)]
 
@@ -81,11 +87,16 @@ def calculate_sentence_metrics(text: str) -> Tuple[float, int, int]:
 
 
 def check_reading_level(
-    text: str, max_grade: float = 7.0, max_avg_sentence_len: float = 15.0
+    text: str,
+    max_grade: float = 7.0,
+    max_avg_sentence_len: float = 15.0,
+    glossary: Optional[Dict[str, str]] = None,
 ) -> CheckResult:
     """Verify readability criteria: FK grade <= 7.0 AND avg sentence length <= 15.0 words.
 
     Calculated strictly on prose with markdown syntax stripped.
+    Provides actionable diagnostic feedback including exact sentences over 15 words
+    and multi-syllable non-glossary words to simplify.
     """
     clean_text = strip_markdown(text)
     if not clean_text or len(clean_text.split()) < 20:
@@ -100,33 +111,100 @@ def check_reading_level(
     fk_grade = textstat.flesch_kincaid_grade(clean_text)
     avg_sentence_len, total_words, total_sentences = calculate_sentence_metrics(text)
 
-    # Find sample sentence exceeding threshold if avg sentence length fails
-    sample_long_sentence = ""
-    if avg_sentence_len > max_avg_sentence_len:
-        raw_sentences = [
-            s.strip() for s in re.split(r"(?<=[.!?])\s+", clean_text) if len(s.split()) > 18
-        ]
-        if raw_sentences:
-            sample_long_sentence = raw_sentences[0]
+    # Extract sentences
+    raw_sentences = [
+        s.strip()
+        for s in re.split(r"(?<=[.!?])\s+|\n+", clean_text)
+        if re.search(r"\w+", s)
+    ]
+
+    # Identify all sentences over 15 words
+    long_sentences: List[Tuple[int, str]] = []
+    for s in raw_sentences:
+        words = re.findall(r"\b[A-Za-z0-9'-]+\b", s)
+        if len(words) > 15:
+            long_sentences.append((len(words), s))
+    long_sentences.sort(key=lambda x: x[0], reverse=True)
+
+    # Extract multi-syllable non-glossary words (>= 3 syllables)
+    glossary_tokens = set()
+    if glossary:
+        for k in glossary.keys():
+            glossary_tokens.update(k.lower().split())
+    else:
+        glossary_tokens = {
+            "rag", "retrieval", "augmented", "generation", "embeddings", "embedding",
+            "vector", "database", "chunking", "chunks", "prompt", "prompts",
+            "hallucination", "hallucinations", "limitations", "grounding",
+            "parametric", "non-parametric", "external", "knowledge", "artificial",
+            "intelligence"
+        }
+
+    all_words = re.findall(r"\b[A-Za-z]{3,}\b", clean_text)
+    hard_words = []
+    seen_hard = set()
+    for w in all_words:
+        low = w.lower()
+        if low not in glossary_tokens and low not in seen_hard:
+            if textstat.syllable_count(w) >= 3:
+                seen_hard.add(low)
+                hard_words.append(low)
 
     grade_pass = fk_grade <= max_grade
     sentence_len_pass = avg_sentence_len <= max_avg_sentence_len
     all_pass = grade_pass and sentence_len_pass
 
-    reason = (
-        f"FK Grade: {fk_grade:.1f} (target <= {max_grade}), "
-        f"Avg Sentence Length: {avg_sentence_len:.1f} words (target <= {max_avg_sentence_len}). "
-    )
-    if not grade_pass:
-        reason += f"Reading level grade ({fk_grade:.1f}) is too difficult for target beginner learner. "
-    if not sentence_len_pass:
-        reason += f"Average sentence length ({avg_sentence_len:.1f} words) exceeds maximum allowable 15 words. "
+    # Pick evidence quote: longest violating sentence that exists verbatim in original text
+    evidence_quote = ""
+    for _, s in long_sentences:
+        if s in text:
+            evidence_quote = s
+            break
+    if not evidence_quote and long_sentences:
+        # Search unstripped lines for match
+        first_few = " ".join(long_sentences[0][1].split()[:5])
+        for line in text.splitlines():
+            if first_few in line:
+                evidence_quote = line.strip()
+                break
+
+    if all_pass:
+        reason = (
+            f"FK Grade: {fk_grade:.2f} (target <= {max_grade}), "
+            f"Avg Sentence Length: {avg_sentence_len:.2f} words (target <= {max_avg_sentence_len})."
+        )
+    else:
+        reasons = []
+        if not grade_pass:
+            reasons.append(
+                f"Reading level grade ({fk_grade:.2f}) is too difficult for target beginner learner "
+                f"(exceeds target <= {max_grade}, failing by {fk_grade - max_grade:+.2f})."
+            )
+        if not sentence_len_pass:
+            reasons.append(
+                f"Average sentence length ({avg_sentence_len:.2f} words) exceeds maximum allowable {max_avg_sentence_len} words "
+                f"(failing by {avg_sentence_len - max_avg_sentence_len:+.2f} words)."
+            )
+
+        if long_sentences:
+            sample_long = [f'"{s}" ({count} words)' for count, s in long_sentences[:5]]
+            reasons.append(
+                f"Exact sentences over 15 words to split ({len(long_sentences)} total):\n  - "
+                + "\n  - ".join(sample_long)
+            )
+
+        if hard_words:
+            reasons.append(
+                f"Multi-syllable non-glossary words to simplify: {', '.join(hard_words[:12])}."
+            )
+
+        reason = "\n".join(reasons)
 
     return CheckResult(
         check_id="reading_level",
         passed=all_pass,
         reason=reason.strip(),
-        evidence_quote=sample_long_sentence if sample_long_sentence in text else "",
+        evidence_quote=evidence_quote,
     )
 
 
@@ -137,12 +215,13 @@ DEFINITION_INDICATORS = [
     r"\bmeans\b",
     r"\brefers to\b",
     r"\bstands for\b",
+    r"\bshort for\b",
     r"\bdefined as\b",
     r"\bthink of (?:it|this) as\b",
     r"\bin simple words\b",
     r"\bwhich is\b",
     r"\bknown as\b",
-    r"\bcalled\b",
+    r"\bcall(?:ed|s)?\b",
     r":",
     r"—",
     r"\(.*?\)",
@@ -153,9 +232,10 @@ def check_glossary_coverage(text: str, glossary: Dict[str, str]) -> CheckResult:
     """Verify that every technical term from glossary that appears is defined at first use.
 
     Amendment 8: Glossary has max 12 terms.
-    Checks that the sentence containing the first occurrence of each term, OR the
-    immediately following sentence, defines the term in simple language before it
-    is used freely in the lesson.
+    Checks that the sentence containing the first occurrence of each term in prose,
+    or the immediately adjacent sentence (preceding or succeeding), defines the term
+    in simple language before it is used freely in the lesson. Headings (# and ##)
+    are excluded so that section titles are not falsely treated as body definitions.
     """
     if not glossary:
         return CheckResult(
@@ -165,8 +245,9 @@ def check_glossary_coverage(text: str, glossary: Dict[str, str]) -> CheckResult:
             evidence_quote="",
         )
 
-    # Clean text to sentence list
-    clean_text = strip_markdown(text)
+    # Exclude markdown headers from prose definition checks
+    prose_text = re.sub(r"^\s*#{1,6}\s+.*$", "", text, flags=re.MULTILINE)
+    clean_text = strip_markdown(prose_text)
     sentences = [s.strip() for s in re.split(r"(?<=[.!?])\s+", clean_text) if s.strip()]
 
     undefined_terms: List[Tuple[str, str]] = []
@@ -188,28 +269,25 @@ def check_glossary_coverage(text: str, glossary: Dict[str, str]) -> CheckResult:
                 for ind in DEFINITION_INDICATORS
             )
 
-            # Also check immediate next sentence (first_idx + 1) if present
+            # Check immediate next sentence (first_idx + 1)
             has_definition_next = False
             if first_idx + 1 < len(sentences):
                 next_sentence = sentences[first_idx + 1]
-                # If next sentence mentions the term or has definitional indicators
-                if re.search(term_pattern, next_sentence, flags=re.IGNORECASE) or any(
-                    next_sentence.lower().startswith(prefix)
-                    for prefix in [
-                        "this means",
-                        "in simple words",
-                        "this is",
-                        "think of",
-                        "a ",
-                        "an ",
-                    ]
-                ):
-                    has_definition_next = any(
-                        re.search(ind, next_sentence, flags=re.IGNORECASE)
-                        for ind in DEFINITION_INDICATORS
-                    )
+                has_definition_next = any(
+                    re.search(ind, next_sentence, flags=re.IGNORECASE)
+                    for ind in DEFINITION_INDICATORS
+                )
 
-            if not (has_definition_first or has_definition_next):
+            # Check immediate preceding sentence (first_idx - 1)
+            has_definition_prev = False
+            if first_idx > 0:
+                prev_sentence = sentences[first_idx - 1]
+                has_definition_prev = any(
+                    re.search(ind, prev_sentence, flags=re.IGNORECASE)
+                    for ind in DEFINITION_INDICATORS
+                )
+
+            if not (has_definition_first or has_definition_next or has_definition_prev):
                 undefined_terms.append((term, first_sentence))
 
     if undefined_terms:

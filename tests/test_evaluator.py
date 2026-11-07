@@ -1,7 +1,8 @@
 """Evaluator Test Suite: Evaluates 8 bad lessons and 1 golden lesson (M6).
 
-Asserts that each bad lesson is caught by its intended check, asserts that the
-golden lesson passes all 10 checks, and prints a formatted catch-rate table.
+Assesses bad lessons to confirm targeted violations are caught by the rubric,
+verifies that the golden lesson passes all 10 checks, and prints a formatted
+catch-rate table showing both expected violations and any extra failing checks.
 """
 
 import json
@@ -191,19 +192,21 @@ def test_mocked_evaluator_catch_rate_table():
 
     golden_passed = golden_result.passed and len(golden_result.failing_checks) == 0
 
-    # Print Formatted Catch-Rate Table
-    print("\n\n" + "=" * 75)
-    print("           EVALUATOR TEST SUITE: CATCH-RATE BENCHMARK TABLE")
-    print("=" * 75)
-    print(f"{'Test Lesson File':<25} | {'Expected Check':<16} | {'Status':<10} | {'Caught By'}")
-    print("-" * 75)
+    # Print Formatted Catch-Rate Table per Requirement 6
+    print("\n\n" + "=" * 90)
+    print("                EVALUATOR TEST SUITE: CATCH-RATE BENCHMARK TABLE")
+    print("=" * 90)
+    print(f"{'Test Lesson File':<24} | {'Expected Check':<16} | {'Status':<10} | {'Extra Failing Checks'}")
+    print("-" * 90)
     for r in results_table:
         status_str = "CAUGHT" if r["caught"] else "MISSED"
-        print(f"{r['file']:<25} | {r['expected']:<16} | {status_str:<10} | {', '.join(r['failing_checks'])}")
-    print("-" * 75)
+        extra_checks = [c for c in r["failing_checks"] if c != r["expected"]]
+        extra_str = ", ".join(extra_checks) if extra_checks else "None"
+        print(f"{r['file']:<24} | {r['expected']:<16} | {status_str:<10} | {extra_str}")
+    print("-" * 90)
     golden_status = "PASSED (10/10)" if golden_passed else "FAILED"
-    print(f"{'good_rag_lesson.md':<25} | {'(golden: all 10)':<16} | {golden_status:<10} | None (0 fails)")
-    print("=" * 75)
+    print(f"{'good_rag_lesson.md':<24} | {'(golden: all 10)':<16} | {golden_status:<10} | None (0 fails)")
+    print("=" * 90)
 
     catch_rate = (caught_count / len(EXPECTED_FAILURES)) * 100
     print(f"Bad Lessons Caught: {caught_count}/{len(EXPECTED_FAILURES)} ({catch_rate:.1f}%)")
@@ -235,3 +238,4 @@ def test_live_evaluator_catch_rate_table():
     eval_out = evaluator_node(state)
     eval_result = eval_out["attempts"][0].evaluation
     assert "accuracy" in eval_result.failing_checks
+

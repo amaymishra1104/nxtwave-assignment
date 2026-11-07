@@ -150,3 +150,4 @@ Test your understanding with these three quick questions:
 1. What is the difference between how an AI answers in a closed-book test versus with RAG?
 2. Why do we cut long documents into smaller chunks before creating vectors?
 3. How does RAG help students in Delhi State University find notice dates?
+

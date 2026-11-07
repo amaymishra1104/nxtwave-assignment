@@ -67,3 +67,4 @@ Rahul types a question into the college website chatbot:
 2. Searching adds extra latency. 
 
 And that is everything you need to know about RAG. Good luck with your AI journey!
+

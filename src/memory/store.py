@@ -261,3 +261,4 @@ class MemoryStore:
             )
             rows = cursor.fetchall()
             return {r["check_id"]: r["fail_count"] for r in rows}
+

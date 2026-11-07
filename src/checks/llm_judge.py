@@ -167,7 +167,7 @@ def call_gemini_with_backoff(
     client: genai.Client,
     model: str,
     prompt: str,
-    schema: type[BaseModel],
+    schema: Optional[type[BaseModel]] = None,
     temperature: float = 0.2,
     max_api_retries: int = 3,
 ) -> str:
@@ -177,11 +177,16 @@ def call_gemini_with_backoff(
 
     for attempt in range(max_api_retries):
         try:
-            config = types.GenerateContentConfig(
-                response_mime_type="application/json",
-                response_schema=schema,
-                temperature=temperature,
-            )
+            if schema:
+                config = types.GenerateContentConfig(
+                    response_mime_type="application/json",
+                    response_schema=schema,
+                    temperature=temperature,
+                )
+            else:
+                config = types.GenerateContentConfig(
+                    temperature=temperature,
+                )
             response = client.models.generate_content(
                 model=model,
                 contents=prompt,

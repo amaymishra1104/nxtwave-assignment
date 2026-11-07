@@ -12,6 +12,7 @@ from typing import Any, Dict, Optional
 from google import genai
 from google.genai import types
 
+from src.checks.llm_judge import call_gemini_with_backoff
 from src.config import settings
 from src.schemas import LessonPlan, LessonState
 
@@ -59,17 +60,14 @@ Verified Facts reference:
 {facts_summary}
 """
 
-    config = types.GenerateContentConfig(
-        response_mime_type="application/json",
-        response_schema=LessonPlan,
+    raw_json = call_gemini_with_backoff(
+        client=client,
+        model=settings.generator_model,
+        prompt=prompt,
+        schema=LessonPlan,
         temperature=settings.judge_temperature,
     )
 
-    response = client.models.generate_content(
-        model=settings.generator_model,
-        contents=prompt,
-        config=config,
-    )
-
-    plan = LessonPlan.model_validate_json(response.text)
+    plan = LessonPlan.model_validate_json(raw_json)
     return {"plan": plan}
+

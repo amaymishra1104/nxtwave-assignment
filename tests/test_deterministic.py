@@ -190,3 +190,4 @@ def test_golden_lesson_passes_all_deterministic_checks():
     # 4. Quiz structure check (exactly 3 questions in Self-Check section)
     quiz_res = check_quiz_structure(lesson_text, required_count=3)
     assert quiz_res.passed is True, f"Golden lesson failed quiz: {quiz_res.reason}"
+

@@ -12,3 +12,4 @@
   "Augment": "Adding extra relevant facts and reference text into the prompt to help the AI answer accurately.",
   "Context Window": "The maximum amount of text an AI model can read and keep in its working memory at one time."
 }
+

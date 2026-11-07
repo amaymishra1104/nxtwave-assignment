@@ -77,3 +77,4 @@ Rahul asks the chatbot about the exam deadline.
 1. Why is RAG like an open-book exam?
 2. Does RAG retrain the model weights?
 3. What is chunking?
+
