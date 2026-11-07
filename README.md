@@ -219,6 +219,10 @@ pytest -m "not live"
 python tests/test_evaluator.py --live
 ```
 
+### 6. Run the Web UI
+Install dependencies (`pip install -r requirements.txt`) and launch the interactive browser prototype via `streamlit run app.py`.
+The app provides two modes: **Live run** (executes the LangGraph pipeline interactively with Gemini API) and **Replay saved run** (inspects past run traces and quality matrices offline with zero API keys and no network).
+
 ---
 
 ## 7. Artifact Outputs
