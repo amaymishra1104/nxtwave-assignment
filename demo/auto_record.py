@@ -160,6 +160,51 @@ def terminate_tree(pid: int):
         pass
 
 
+def concat_videos(video_paths: List[Path], output_path: Path, ffmpeg_cmd: str) -> bool:
+    """Concatenate multiple MP4 video files into a single continuous video."""
+    valid_paths = [p for p in video_paths if p.exists() and p.stat().st_size > 0]
+    if not valid_paths:
+        return False
+    list_file = output_path.parent / f"concat_list_{output_path.stem}.txt"
+    lines = [f"file '{p.resolve().as_posix()}'" for p in valid_paths]
+    list_file.write_text("\n".join(lines), encoding="utf-8")
+
+    cmd = [
+        ffmpeg_cmd,
+        "-y",
+        "-f", "concat",
+        "-safe", "0",
+        "-i", str(list_file),
+        "-c", "copy",
+        str(output_path),
+    ]
+    try:
+        subprocess.run(cmd, capture_output=True, check=True)
+        if list_file.exists():
+            list_file.unlink()
+        return output_path.exists() and output_path.stat().st_size > 0
+    except Exception:
+        # Fallback to re-encoding if stream copy fails
+        reencode_cmd = [
+            ffmpeg_cmd,
+            "-y",
+            "-f", "concat",
+            "-safe", "0",
+            "-i", str(list_file),
+            "-c:v", "libx264",
+            "-pix_fmt", "yuv420p",
+            "-preset", "veryfast",
+            str(output_path),
+        ]
+        try:
+            subprocess.run(reencode_cmd, capture_output=True, check=True)
+            if list_file.exists():
+                list_file.unlink()
+            return output_path.exists() and output_path.stat().st_size > 0
+        except Exception:
+            return False
+
+
 def record_segment_ffmpeg(
     seg_id: str,
     countdown: int,
@@ -639,6 +684,7 @@ def main():
 
     session_start_time = time.time()
     segments = ["1", "2", "3", "4", "5"] if args.segment == "all" else [args.segment]
+    recorded_videos: List[Path] = []
 
     for seg_id in segments:
         if mode_to_use == "ffmpeg":
@@ -668,6 +714,7 @@ def main():
             )
 
         if ok:
+            recorded_videos.append(vpath)
             console.print(f"[bold green]✔ Successfully recorded Segment {seg_id}: {vpath}[/bold green]")
             if ffprobe_cmd:
                 meta = probe_video(vpath, ffprobe_cmd)
@@ -683,6 +730,34 @@ def main():
                     console.print(f"  [cyan]Middle frame extracted: {frame_dest}[/cyan]")
         else:
             console.print(f"[bold red]✖ Recording failed for Segment {seg_id}[/bold red]")
+
+    # If all segments recorded, stitch them into a single complete Loom presentation video
+    if args.segment == "all" and len(recorded_videos) > 1 and ffmpeg_cmd:
+        complete_video_path = video_dir / f"complete_loom_demo_{session_ts}.mp4"
+        console.print(
+            Panel(
+                f"[bold cyan]STITCHING COMPLETE LOOM DEMO VIDEO[/bold cyan]\n"
+                f"Combining {len(recorded_videos)} segments into single continuous file:\n"
+                f"[bold green]{complete_video_path}[/bold green]",
+                border_style="cyan",
+            )
+        )
+        stitched = concat_videos(recorded_videos, complete_video_path, ffmpeg_cmd)
+        if stitched:
+            console.print(f"[bold green]✔ Complete Loom video created: {complete_video_path}[/bold green]")
+            if ffprobe_cmd:
+                meta = probe_video(complete_video_path, ffprobe_cmd)
+                console.print(f"  Total Duration:   {meta.get('duration', 'N/A')}")
+                console.print(f"  Resolution:       {meta.get('resolution', 'N/A')}")
+                console.print(f"  Total File Size:  {meta.get('size_mb', 'N/A')}")
+
+            # Append complete video to timeline
+            timeline_lines.append(
+                f"COMPLETE LOOM VIDEO | File: {complete_video_path.name} | "
+                f"Total Segments: {len(recorded_videos)} | "
+                f"Duration: {meta.get('duration', 'N/A')} | Status: ready"
+            )
+            timeline_path.write_text("\n".join(timeline_lines) + "\n", encoding="utf-8")
 
 
 if __name__ == "__main__":

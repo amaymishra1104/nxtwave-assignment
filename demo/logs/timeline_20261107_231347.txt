@@ -1,0 +1,10 @@
+# Automated Demo Recording Session Timeline
+# Session Start: 2026-11-07 23:13:47
+# Format: Segment <id>: <name> | File: <filename> | Start: MM:SS | Duration: MM:SS | Status: <status>
+
+Segment 1: Live end-to-end run | File: segment1_20261107_231347.mp4 | Start: 00:00 | Duration: 00:50 | Status: ok
+Segment 2: Deliberate error caught | File: segment2_20261107_231437.mp4 | Start: 00:50 | Duration: 01:39 | Status: ok
+Segment 3: Evaluator catch-rate (live) | File: segment3_20261107_231617.mp4 | Start: 02:29 | Duration: 01:38 | Status: ok
+Segment 4: Memory demo | File: segment4_20261107_231756.mp4 | Start: 04:08 | Duration: 01:16 | Status: ok
+Segment 5: Safe fallback replays | File: segment5_20261107_231912.mp4 | Start: 05:24 | Duration: 01:13 | Status: ok
+COMPLETE LOOM VIDEO | File: complete_loom_demo_20261107_231347.mp4 | Total Segments: 5 | Duration: 05:45 (345.9s) | Status: ready

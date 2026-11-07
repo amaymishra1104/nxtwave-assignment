@@ -1,0 +1,5 @@
+# Demo Video Session Chapter Timeline
+# Session Start: 2026-11-07 23:13:50
+# Format: Segment <id>: <name> | Start: MM:SS | End: MM:SS | Duration: MM:SS | Status: <status>
+
+Segment 1: Live end-to-end run | Start: 00:00 | End: 00:38 | Duration: 00:37 | Status: ok

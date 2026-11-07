@@ -1,0 +1,5 @@
+# Demo Video Session Chapter Timeline
+# Session Start: 2026-11-07 23:16:20
+# Format: Segment <id>: <name> | Start: MM:SS | End: MM:SS | Duration: MM:SS | Status: <status>
+
+Segment 3: Evaluator catch-rate (live) | Start: 00:00 | End: 01:21 | Duration: 01:21 | Status: ok
