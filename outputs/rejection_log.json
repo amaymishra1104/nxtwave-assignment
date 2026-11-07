@@ -1,12 +1,12 @@
 {
-  "run_id": "20261107_131710",
+  "run_id": "20261107_142747",
   "topic": "Introduction to RAG (Retrieval-Augmented Generation)",
   "status": "passed",
-  "attempts_count": 2,
+  "attempts_count": 3,
   "rejection_log": [
     {
       "attempt_number": 0,
-      "timestamp": "2026-11-07T13:17:24.445769",
+      "timestamp": "2026-11-07T14:27:56.568180",
       "evaluation": {
         "passed": false,
         "failing_checks": [
@@ -15,8 +15,8 @@
         "failed_check_details": [
           {
             "check_id": "jargon_defined",
-            "reason": "[CIRCULAR DEFINITION] + [SECTION: Embeddings] + [The definition 'Embeddings are dense numerical vectors representing the semantic meaning of text chunks' uses technical jargon 'dense numerical vectors' and 'semantic meaning' without simple explanation for a beginner.]",
-            "evidence_quote": "Embeddings are dense numerical vectors representing the semantic meaning of text chunks."
+            "reason": "[CIRCULAR/TECHNICAL DEFINITIONS] + [THROUGHOUT THE LESSON] + [THE LESSON USES COMPLEX TERMS LIKE 'SEMANTIC PIECES', 'DENSE NUMERICAL VECTORS', AND 'HIGH-DIMENSIONAL EMBEDDINGS' WITHOUT SIMPLIFYING THEM FOR A NON-TECHNICAL AUDIENCE. THESE NEED TO BE EXPLAINED USING PLAIN LANGUAGE.]",
+            "evidence_quote": "Chunking is the process of breaking large source files into smaller semantic pieces so passages fit within the model context window."
           }
         ]
       },
@@ -24,13 +24,37 @@
     },
     {
       "attempt_number": 1,
-      "timestamp": "2026-11-07T13:17:34.182181",
+      "timestamp": "2026-11-07T14:28:06.016950",
+      "evaluation": {
+        "passed": false,
+        "failing_checks": [
+          "jargon_defined",
+          "no_idioms"
+        ],
+        "failed_check_details": [
+          {
+            "check_id": "jargon_defined",
+            "reason": "[CIRCULAR/VAGUE DEFINITION] + [IN SECTION 'Creating Embeddings'] + [THE TERM 'EMBEDDINGS' IS DEFINED AS 'SECRET COMPUTER CODES', WHICH IS INACCURATE AND VAGUE; IT NEEDS A CLEAR EXPLANATION OF CONVERTING TEXT TO NUMERICAL VECTORS].",
+            "evidence_quote": "Embeddings are secret computer codes made of numbers that capture the true meaning of words"
+          },
+          {
+            "check_id": "no_idioms",
+            "reason": "[IDIOM USED] + [IN SECTION 'Step 3: Storing in a Vector Database'] + [THE PHRASE 'IN A FLASH' IS A WESTERN IDIOM AND SHOULD BE REPLACED WITH A LITERAL DESCRIPTION LIKE 'VERY QUICKLY'].",
+            "evidence_quote": "lets the computer search millions of text pieces in a flash"
+          }
+        ]
+      },
+      "changes_made": "- jargon_defined: Rewrote the technical definitions in Step 1 (Chunking), Step 2 (Embeddings), and Step 3 (Vector Database) to use simple everyday language, explaining terms like 'semantic pieces', 'dense numerical vectors', and 'high-dimensional embeddings' in plain terms suitable for a beginner student."
+    },
+    {
+      "attempt_number": 2,
+      "timestamp": "2026-11-07T14:28:14.190242",
       "evaluation": {
         "passed": true,
         "failing_checks": [],
         "failed_check_details": []
       },
-      "changes_made": "- Fixed the jargon_defined check by replacing the circular definition in the Embeddings section with a clear, simple explanation avoiding heavy technical jargon like 'dense numerical vectors' and 'semantic meaning'."
+      "changes_made": "- Fixed jargon_defined in 'Creating Embeddings' by replacing the vague phrase 'secret computer codes' with an accurate explanation of converting text words into numerical vectors that represent meaning.\n- Fixed no_idioms in 'Step 3: Storing in a Vector Database' by replacing the idiom 'in a flash' with the literal description 'very quickly'."
     }
   ]
 }

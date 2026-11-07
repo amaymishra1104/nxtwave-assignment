@@ -1,0 +1,282 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Autonomous Lesson & Evaluation Dashboard</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+  <style>
+    body { font-family: 'Plus Jakarta Sans', sans-serif; }
+    code, pre { font-family: 'JetBrains Mono', monospace; }
+    .prose h1 { font-size: 1.875rem; font-weight: 800; color: #0f172a; margin-top: 1.5rem; margin-bottom: 0.75rem; border-bottom: 2px solid #e2e8f0; padding-bottom: 0.5rem; }
+    .prose h2 { font-size: 1.5rem; font-weight: 700; color: #1e293b; margin-top: 1.5rem; margin-bottom: 0.75rem; }
+    .prose h3 { font-size: 1.25rem; font-weight: 600; color: #334155; margin-top: 1.25rem; margin-bottom: 0.5rem; }
+    .prose p { line-height: 1.75; color: #334155; margin-bottom: 1rem; font-size: 1.05rem; }
+    .prose ul, .prose ol { margin-left: 1.5rem; margin-bottom: 1rem; color: #334155; }
+    .prose li { margin-bottom: 0.35rem; }
+    .prose blockquote { border-left: 4px solid #3b82f6; background-color: #eff6ff; padding: 0.75rem 1rem; border-radius: 0.375rem; margin: 1rem 0; font-style: italic; }
+    .prose hr { margin: 2rem 0; border-color: #cbd5e1; }
+  </style>
+</head>
+<body class="bg-slate-50 text-slate-900 min-h-screen">
+  <!-- Top Navigation Header -->
+  <header class="bg-slate-900 text-white border-b border-slate-800 sticky top-0 z-50 shadow-md">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3.5 flex flex-wrap justify-between items-center gap-4">
+      <div class="flex items-center space-x-3">
+        <div class="w-9 h-9 rounded-lg bg-blue-600 flex items-center justify-center font-extrabold text-lg text-white shadow-inner">AG</div>
+        <div>
+          <h1 class="font-bold text-base tracking-tight">Autonomous Lesson Generation & Evaluator</h1>
+          <p class="text-xs text-slate-400">Target: 12th-Grade Graduate (India, Non-English Medium) • LangGraph State Machine</p>
+        </div>
+      </div>
+      <div class="flex items-center space-x-3">
+        <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold text-white bg-emerald-500">
+          <span class="w-2 h-2 mr-1.5 rounded-full bg-white animate-pulse"></span>
+          PASSED & READY TO SHIP
+        </span>
+        <span class="text-xs text-slate-400 bg-slate-800 px-2.5 py-1 rounded border border-slate-700">Run: <code class="text-blue-400">20261107_142747</code></span>
+      </div>
+    </div>
+  </header>
+
+  <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    <!-- Tab Controls -->
+    <div class="border-b border-slate-200 mb-8">
+      <nav class="-mb-px flex space-x-8" aria-label="Tabs">
+        <button onclick="switchTab('lesson')" id="tab-btn-lesson" class="tab-btn border-blue-600 text-blue-600 whitespace-nowrap py-3 px-1 border-b-2 font-semibold text-sm flex items-center gap-2">
+          <span>📖</span> Published Lesson
+        </button>
+        <button onclick="switchTab('rubric')" id="tab-btn-rubric" class="tab-btn border-transparent text-slate-500 hover:text-slate-700 hover:border-slate-300 whitespace-nowrap py-3 px-1 border-b-2 font-semibold text-sm flex items-center gap-2">
+          <span>🎯</span> 10-Check Evaluation Matrix
+        </button>
+        <button onclick="switchTab('rejection')" id="tab-btn-rejection" class="tab-btn border-transparent text-slate-500 hover:text-slate-700 hover:border-slate-300 whitespace-nowrap py-3 px-1 border-b-2 font-semibold text-sm flex items-center gap-2">
+          <span>🔍</span> Rejection & Revision Telemetry (3 Attempts)
+        </button>
+        <button onclick="switchTab('memory')" id="tab-btn-memory" class="tab-btn border-transparent text-slate-500 hover:text-slate-700 hover:border-slate-300 whitespace-nowrap py-3 px-1 border-b-2 font-semibold text-sm flex items-center gap-2">
+          <span>🧠</span> SQLite Memory & Learned Rules (2)
+        </button>
+      </nav>
+    </div>
+
+    <!-- TAB 1: Published Lesson -->
+    <div id="tab-content-lesson" class="tab-content">
+      <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-8 sm:p-12">
+        <div class="mb-6 pb-6 border-b border-slate-100 flex flex-wrap justify-between items-center text-xs text-slate-500 gap-2">
+          <div class="flex items-center gap-2">
+            <span class="font-medium text-slate-700">Topic:</span> Introduction to RAG (Retrieval-Augmented Generation)
+          </div>
+          <div class="flex items-center gap-3">
+            <span class="bg-blue-50 text-blue-700 px-2.5 py-1 rounded-md font-medium border border-blue-100">Grade &le; 7 Reading Level</span>
+            <span class="bg-emerald-50 text-emerald-700 px-2.5 py-1 rounded-md font-medium border border-emerald-100">Zero Unexplained Jargon</span>
+            <span class="bg-purple-50 text-purple-700 px-2.5 py-1 rounded-md font-medium border border-purple-100">India Scenario</span>
+          </div>
+        </div>
+        <div id="lesson-markdown-render" class="prose max-w-none"></div>
+      </div>
+    </div>
+
+    <!-- TAB 2: Evaluation Matrix (10 Checks) -->
+    <div id="tab-content-rubric" class="tab-content hidden">
+      <div class="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
+        <div class="p-6 bg-slate-900 text-white">
+          <h2 class="text-lg font-bold">10-Check Pedagogical Rubric Matrix</h2>
+          <p class="text-xs text-slate-400 mt-1">Hybrid architecture: Deterministic Code (quantitative readability & glossary parsing) + Independent LLM Judge (qualitative pedagogical grading).</p>
+        </div>
+        <div class="divide-y divide-slate-200">
+          <div class="p-4 sm:p-6 grid grid-cols-1 md:grid-cols-4 gap-4 items-center hover:bg-slate-50 transition">
+            <div class="font-bold text-slate-900 flex items-center gap-2"><span class="w-6 h-6 rounded-full bg-blue-100 text-blue-800 text-xs flex items-center justify-center font-bold">1</span> accuracy</div>
+            <div class="text-xs text-purple-700 font-medium">LLM Judge (Fact Pack Anchor)</div>
+            <div class="text-sm text-slate-600 md:col-span-2">Factual fidelity to Lewis et al. (2020). Verifies model weights stay frozen and RAG never modifies weights.</div>
+          </div>
+          <div class="p-4 sm:p-6 grid grid-cols-1 md:grid-cols-4 gap-4 items-center hover:bg-slate-50 transition">
+            <div class="font-bold text-slate-900 flex items-center gap-2"><span class="w-6 h-6 rounded-full bg-blue-100 text-blue-800 text-xs flex items-center justify-center font-bold">2</span> what_why_how</div>
+            <div class="text-xs text-purple-700 font-medium">LLM Judge</div>
+            <div class="text-sm text-slate-600 md:col-span-2">Comprehensive coverage answering What RAG is, Why models need it (hallucination reduction), and How it functions.</div>
+          </div>
+          <div class="p-4 sm:p-6 grid grid-cols-1 md:grid-cols-4 gap-4 items-center hover:bg-slate-50 transition">
+            <div class="font-bold text-slate-900 flex items-center gap-2"><span class="w-6 h-6 rounded-full bg-blue-100 text-blue-800 text-xs flex items-center justify-center font-bold">3</span> key_points</div>
+            <div class="text-xs text-purple-700 font-medium">LLM Judge</div>
+            <div class="text-sm text-slate-600 md:col-span-2">Explicit coverage of all 8 core concepts: retrieval, embeddings, vector database, chunking, prompt augmentation, generation, hallucination reduction, limitations.</div>
+          </div>
+          <div class="p-4 sm:p-6 grid grid-cols-1 md:grid-cols-4 gap-4 items-center hover:bg-slate-50 transition">
+            <div class="font-bold text-slate-900 flex items-center gap-2"><span class="w-6 h-6 rounded-full bg-blue-100 text-blue-800 text-xs flex items-center justify-center font-bold">4</span> jargon_defined</div>
+            <div class="text-xs text-emerald-700 font-medium">Deterministic + LLM Hybrid</div>
+            <div class="text-sm text-slate-600 md:col-span-2">All 12 glossary terms defined on initial introduction with zero prerequisite technical knowledge assumed.</div>
+          </div>
+          <div class="p-4 sm:p-6 grid grid-cols-1 md:grid-cols-4 gap-4 items-center hover:bg-slate-50 transition">
+            <div class="font-bold text-slate-900 flex items-center gap-2"><span class="w-6 h-6 rounded-full bg-blue-100 text-blue-800 text-xs flex items-center justify-center font-bold">5</span> reading_level</div>
+            <div class="text-xs text-emerald-700 font-medium">Deterministic Code (Pure Math)</div>
+            <div class="text-sm text-slate-600 md:col-span-2">Markdown stripped &rarr; Flesch-Kincaid Grade Level &le; 7.0 AND Average Sentence Length &le; 15.0 words. Zero partial credit.</div>
+          </div>
+          <div class="p-4 sm:p-6 grid grid-cols-1 md:grid-cols-4 gap-4 items-center hover:bg-slate-50 transition">
+            <div class="font-bold text-slate-900 flex items-center gap-2"><span class="w-6 h-6 rounded-full bg-blue-100 text-blue-800 text-xs flex items-center justify-center font-bold">6</span> no_idioms</div>
+            <div class="text-xs text-purple-700 font-medium">LLM Judge</div>
+            <div class="text-sm text-slate-600 md:col-span-2">Zero Western colloquialisms or opaque cultural idioms (e.g. 'bite the bullet', 'silver bullet', 'hit the ground running').</div>
+          </div>
+          <div class="p-4 sm:p-6 grid grid-cols-1 md:grid-cols-4 gap-4 items-center hover:bg-slate-50 transition">
+            <div class="font-bold text-slate-900 flex items-center gap-2"><span class="w-6 h-6 rounded-full bg-blue-100 text-blue-800 text-xs flex items-center justify-center font-bold">7</span> worked_example</div>
+            <div class="text-xs text-purple-700 font-medium">LLM Judge</div>
+            <div class="text-sm text-slate-600 md:col-span-2">Concrete 3-step walkthrough set in an Indian student context (e.g. college admission chatbot reading a notice PDF circular).</div>
+          </div>
+          <div class="p-4 sm:p-6 grid grid-cols-1 md:grid-cols-4 gap-4 items-center hover:bg-slate-50 transition">
+            <div class="font-bold text-slate-900 flex items-center gap-2"><span class="w-6 h-6 rounded-full bg-blue-100 text-blue-800 text-xs flex items-center justify-center font-bold">8</span> analogy</div>
+            <div class="text-xs text-purple-700 font-medium">LLM Judge</div>
+            <div class="text-sm text-slate-600 md:col-span-2">Intuitive comparison between closed-book memory tests and open-book exam retrieval introduced early in the lesson.</div>
+          </div>
+          <div class="p-4 sm:p-6 grid grid-cols-1 md:grid-cols-4 gap-4 items-center hover:bg-slate-50 transition">
+            <div class="font-bold text-slate-900 flex items-center gap-2"><span class="w-6 h-6 rounded-full bg-blue-100 text-blue-800 text-xs flex items-center justify-center font-bold">9</span> coherent_flow</div>
+            <div class="text-xs text-purple-700 font-medium">LLM Judge</div>
+            <div class="text-sm text-slate-600 md:col-span-2">Logical pedagogical progression: Problem (limits of memory) &rarr; Solution (RAG) &rarr; Mechanics &rarr; Limitations.</div>
+          </div>
+          <div class="p-4 sm:p-6 grid grid-cols-1 md:grid-cols-4 gap-4 items-center hover:bg-slate-50 transition">
+            <div class="font-bold text-slate-900 flex items-center gap-2"><span class="w-6 h-6 rounded-full bg-blue-100 text-blue-800 text-xs flex items-center justify-center font-bold">10</span> wrap_up</div>
+            <div class="text-xs text-emerald-700 font-medium">Deterministic + LLM Hybrid</div>
+            <div class="text-sm text-slate-600 md:col-span-2">Dedicated section with heading '## Self-Check' containing exactly three numbered practice questions.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- TAB 3: Rejection & Revision Telemetry -->
+    <div id="tab-content-rejection" class="tab-content hidden">
+      <div class="space-y-6" id="rejection-attempts-container">
+        <!-- Rendered via JS from rejection_data -->
+      </div>
+    </div>
+
+    <!-- TAB 4: SQLite Memory & Rules -->
+    <div id="tab-content-memory" class="tab-content hidden">
+      <div class="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden p-6">
+        <div class="mb-6">
+          <h2 class="text-lg font-bold text-slate-900">SQLite Memory Store (`data/memory.db`)</h2>
+          <p class="text-xs text-slate-500">Autonomous self-evolution across runs: extracts recurring failures, updates recurrence frequencies, and caps top 5 active rules injected into future generation prompts.</p>
+        </div>
+        <div class="overflow-x-auto">
+          <table class="min-w-full divide-y divide-slate-200 text-sm">
+            <thead class="bg-slate-50">
+              <tr>
+                <th class="px-4 py-3 text-left font-semibold text-slate-700">ID</th>
+                <th class="px-4 py-3 text-left font-semibold text-slate-700">Source Check</th>
+                <th class="px-4 py-3 text-center font-semibold text-slate-700">Recurrence Count</th>
+                <th class="px-4 py-3 text-center font-semibold text-slate-700">Status</th>
+                <th class="px-4 py-3 text-left font-semibold text-slate-700">Learned Rule Text</th>
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-slate-200">
+              
+              <tr class="hover:bg-slate-50">
+                <td class="px-4 py-3 font-mono text-xs text-slate-500">#1</td>
+                <td class="px-4 py-3 font-semibold text-slate-800"><span class="bg-slate-100 text-slate-700 px-2 py-0.5 rounded text-xs">jargon_defined</span></td>
+                <td class="px-4 py-3 text-center font-bold text-blue-600">7</td>
+                <td class="px-4 py-3 text-center">
+                  <span class="inline-flex px-2 py-0.5 rounded text-xs font-semibold bg-emerald-100 text-emerald-800">
+                    ACTIVE
+                  </span>
+                </td>
+                <td class="px-4 py-3 text-slate-700 text-xs">Define every specialized term (e.g. embeddings, chunking, vector database) with simple words right inside the first sentence it is introduced.</td>
+              </tr>
+              
+              <tr class="hover:bg-slate-50">
+                <td class="px-4 py-3 font-mono text-xs text-slate-500">#2</td>
+                <td class="px-4 py-3 font-semibold text-slate-800"><span class="bg-slate-100 text-slate-700 px-2 py-0.5 rounded text-xs">no_idioms</span></td>
+                <td class="px-4 py-3 text-center font-bold text-blue-600">1</td>
+                <td class="px-4 py-3 text-center">
+                  <span class="inline-flex px-2 py-0.5 rounded text-xs font-semibold bg-emerald-100 text-emerald-800">
+                    ACTIVE
+                  </span>
+                </td>
+                <td class="px-4 py-3 text-slate-700 text-xs">Use strictly literal language. Avoid all colloquial phrases or English idioms such as 'from scratch', 'silver bullet', or 'bite the bullet'.</td>
+              </tr>
+              
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <script>
+    // Tab switching logic
+    function switchTab(tabName) {
+      document.querySelectorAll('.tab-btn').forEach(btn => {
+        btn.classList.remove('border-blue-600', 'text-blue-600');
+        btn.classList.add('border-transparent', 'text-slate-500');
+      });
+      document.querySelectorAll('.tab-content').forEach(content => {
+        content.classList.add('hidden');
+      });
+
+      const selectedBtn = document.getElementById('tab-btn-' + tabName);
+      const selectedContent = document.getElementById('tab-content-' + tabName);
+      if (selectedBtn && selectedContent) {
+        selectedBtn.classList.remove('border-transparent', 'text-slate-500');
+        selectedBtn.classList.add('border-blue-600', 'text-blue-600');
+        selectedContent.classList.remove('hidden');
+      }
+    }
+
+    // Render Lesson Markdown
+    const rawLessonMarkdown = "# Introduction to RAG (Retrieval-Augmented Generation)\n\nWelcome to your first lesson on artificial intelligence. Today, you will learn a powerful method called RAG. This method helps smart computer programs give correct answers. \n\n## The Open-Book Exam Analogy\n\nImagine you are sitting in a big exam hall. The question paper is on your desk. \n\nYou face two choices. You can try to write answers using only your memory. Or you can bring your textbooks inside the hall and open them. \n\nWriting answers only from memory is hard. You might forget exact details. You might make up false facts. \n\nBringing textbooks inside the hall changes everything. You read the question. You search the textbook index. You find the right page. You read the exact words. Then you write the correct answer. \n\nRAG works just like this open-book exam.\n\n## The Problem: Why AI Needs Help\n\nStandard AI models are computer programs trained on massive amounts of text. They have a built-in memory called parametric memory. This is the permanent memory stored inside the neural network weights of the model. \n\nBut this memory has limits. The AI trained on old data cannot know new rules or fresh notices. \n\nWhen the AI does not know an answer, it does not stop. It guesses. It sounds very confident. But the answer is completely false. \n\nIn AI, this problem is called a hallucination. A hallucination is when the AI makes up fake facts and presents them as truth. \n\nUpdating the permanent memory of an AI requires full model retraining. Retraining takes months. It costs millions of rupees. It is very slow. \n\nRAG solves this problem without changing the AI model weights at all.\n\n## What is RAG?\n\nRAG stands for Retrieval-Augmented Generation. It is a smart system that connects an AI model to an external library of documents. \n\nRAG has two main parts. The first part is retrieval. Retrieval means searching an external knowledge store to find the exact text facts needed for a question. \n\nThe second part is generation. Generation means the AI writes a clear, helpful answer using the retrieved facts. \n\n## Worked Example: College Admission Chatbot\n\nLet us walk through a real example from India. \n\nImagine you want to join a local college. The college has a new PDF circular about entrance exam dates and fees. You want to ask questions about this notice.\n\n### Step 1: Document Chunking\n\nLarge documents are too big for an AI to read all at once. So, the system uses chunking. \n\nChunking means cutting a big document into smaller, easy-to-read pieces so the AI can handle the text without getting confused. Each small piece is called a chunk. \n\n### Step 2: Creating Embeddings\n\nNext, the system must understand the meaning of each text chunk. It uses embeddings. \n\nEmbeddings are numerical vectors made of numbers that capture the true meaning of words, converting text into numbers so the computer can group similar topics together. Similar topics get numbers that are close to each other.\n\n### Step 3: Storing in a Vector Database\n\nThese numerical vectors are saved in a special database. \n\nA vector database is a special filing cabinet for number codes that lets the computer search millions of text pieces very quickly. This database helps the system find matching text very quickly.\n\n### Step 4: Retrieval\n\nYou type your question into the college chatbot. Your question is: \"What is the last date to pay fees?\" \n\nThe system turns your question into a vector. It searches the vector database. It finds the exact chunk of text from the PDF circular that talks about fee payment dates.\n\n### Step 5: Augmenting the Prompt\n\nNow the system prepares the final prompt for the AI. \n\nPrompt augmentation means the most relevant retrieved passages are appended directly into the prompt along with the user question before generation. \n\nThe prompt looks like this: \n\"Use only this text: [Fee date is July 15]. Answer the question: What is the last date to pay fees?\"\n\n### Step 6: Generation\n\nThe AI reads the augmented prompt. It generates the final response. \n\nThe AI writes: \"The last date to pay fees is July 15, according to the official college notice.\"\n\nBecause the AI reads the real text, it does not hallucinate. It gives you the correct fact. It can even show the source document citation.\n\n## Why RAG is Safe and Powerful\n\nRAG gives us many benefits. \n\nFirst, it reduces hallucinations. The AI stays grounded in real facts. \n\nSecond, it provides source provenance. Source provenance means the system shows the exact document and page used to make the answer. \n\nThird, you can update your information instantly. If the college changes the fee date, you just swap out the old PDF file in your external document store. You do not touch or retrain the core AI model.\n\n## Limitations of RAG\n\nRAG is powerful, but it has a few limits. \n\nThe main limit is the retrieval bottleneck. If the retrieval system fails to find the correct document chunk, the generator cannot provide the right answer. \n\nAlso, searching external databases adds a small delay in time. This delay is called latency.\n\n## Summary\n\n- RAG combines an AI model with an external document search.\n- It uses chunking to break large files into smaller parts.\n- It uses embeddings and vector databases to find relevant text.\n- It adds retrieved facts to the prompt before generation.\n- It stops the AI from hallucinating without retraining the model.\n\n## Self-Check Questions\n\n1. What is the main purpose of document chunking in a RAG system?\n2. Why does RAG reduce the problem of AI hallucinations?\n3. How do you update the knowledge in a RAG system when new information arrives?";
+    document.getElementById('lesson-markdown-render').innerHTML = marked.parse(rawLessonMarkdown);
+
+    // Render Rejection Data
+    const rejectionData = {"run_id": "20261107_142747", "topic": "Introduction to RAG (Retrieval-Augmented Generation)", "status": "passed", "attempts_count": 3, "rejection_log": [{"attempt_number": 0, "timestamp": "2026-11-07T14:27:56.568180", "evaluation": {"passed": false, "failing_checks": ["jargon_defined"], "failed_check_details": [{"check_id": "jargon_defined", "reason": "[CIRCULAR/TECHNICAL DEFINITIONS] + [THROUGHOUT THE LESSON] + [THE LESSON USES COMPLEX TERMS LIKE 'SEMANTIC PIECES', 'DENSE NUMERICAL VECTORS', AND 'HIGH-DIMENSIONAL EMBEDDINGS' WITHOUT SIMPLIFYING THEM FOR A NON-TECHNICAL AUDIENCE. THESE NEED TO BE EXPLAINED USING PLAIN LANGUAGE.]", "evidence_quote": "Chunking is the process of breaking large source files into smaller semantic pieces so passages fit within the model context window."}]}, "changes_made": null}, {"attempt_number": 1, "timestamp": "2026-11-07T14:28:06.016950", "evaluation": {"passed": false, "failing_checks": ["jargon_defined", "no_idioms"], "failed_check_details": [{"check_id": "jargon_defined", "reason": "[CIRCULAR/VAGUE DEFINITION] + [IN SECTION 'Creating Embeddings'] + [THE TERM 'EMBEDDINGS' IS DEFINED AS 'SECRET COMPUTER CODES', WHICH IS INACCURATE AND VAGUE; IT NEEDS A CLEAR EXPLANATION OF CONVERTING TEXT TO NUMERICAL VECTORS].", "evidence_quote": "Embeddings are secret computer codes made of numbers that capture the true meaning of words"}, {"check_id": "no_idioms", "reason": "[IDIOM USED] + [IN SECTION 'Step 3: Storing in a Vector Database'] + [THE PHRASE 'IN A FLASH' IS A WESTERN IDIOM AND SHOULD BE REPLACED WITH A LITERAL DESCRIPTION LIKE 'VERY QUICKLY'].", "evidence_quote": "lets the computer search millions of text pieces in a flash"}]}, "changes_made": "- jargon_defined: Rewrote the technical definitions in Step 1 (Chunking), Step 2 (Embeddings), and Step 3 (Vector Database) to use simple everyday language, explaining terms like 'semantic pieces', 'dense numerical vectors', and 'high-dimensional embeddings' in plain terms suitable for a beginner student."}, {"attempt_number": 2, "timestamp": "2026-11-07T14:28:14.190242", "evaluation": {"passed": true, "failing_checks": [], "failed_check_details": []}, "changes_made": "- Fixed jargon_defined in 'Creating Embeddings' by replacing the vague phrase 'secret computer codes' with an accurate explanation of converting text words into numerical vectors that represent meaning.\n- Fixed no_idioms in 'Step 3: Storing in a Vector Database' by replacing the idiom 'in a flash' with the literal description 'very quickly'."}]};
+    const container = document.getElementById('rejection-attempts-container');
+    if (rejectionData && rejectionData.rejection_log) {
+      container.innerHTML = rejectionData.rejection_log.map(a => {
+        const passed = a.evaluation ? a.evaluation.passed : false;
+        const failingChecks = a.evaluation ? a.evaluation.failing_checks : [];
+        const details = (a.evaluation && a.evaluation.failed_check_details) ? a.evaluation.failed_check_details : [];
+        
+        return `
+          <div class="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
+            <div class="px-6 py-4 bg-slate-50 border-b border-slate-200 flex justify-between items-center">
+              <div class="flex items-center gap-3">
+                <span class="font-bold text-slate-900 text-base">Attempt #${a.attempt_number}</span>
+                <span class="text-xs text-slate-500 font-mono">${a.timestamp || ''}</span>
+              </div>
+              <span class="px-2.5 py-1 rounded text-xs font-bold ${passed ? 'bg-emerald-100 text-emerald-800' : 'bg-rose-100 text-rose-800'}">
+                ${passed ? 'PASSED (10/10)' : 'FAILED (' + failingChecks.length + ' FAILING)'}
+              </span>
+            </div>
+            
+            <div class="p-6 space-y-4">
+              ${details.length > 0 ? `
+                <div class="space-y-3">
+                  <h4 class="text-xs font-bold tracking-wider text-rose-700 uppercase">Diagnostic Rejection Critique</h4>
+                  ${details.map(d => `
+                    <div class="bg-rose-50 border-l-4 border-rose-500 p-4 rounded-r-lg text-sm text-slate-800 space-y-1.5">
+                      <div class="font-bold text-rose-900 flex items-center gap-1.5">
+                        <span>✖</span> Check: <code>${d.check_id}</code>
+                      </div>
+                      <p class="text-slate-700">${d.reason}</p>
+                      ${d.evidence_quote ? `
+                        <div class="text-xs text-amber-900 bg-amber-50/80 p-2 rounded border border-amber-200 mt-2 italic font-mono">
+                          <strong>Evidence Quote:</strong> "${d.evidence_quote}"
+                        </div>
+                      ` : ''}
+                    </div>
+                  `).join('')}
+                </div>
+              ` : '<div class="text-emerald-700 font-semibold text-sm flex items-center gap-2"><span>✔</span> All 10 hard pass/fail rubric checkpoints met cleanly.</div>'}
+
+              ${a.changes_made ? `
+                <div class="mt-4 pt-4 border-t border-slate-100">
+                  <h4 class="text-xs font-bold tracking-wider text-blue-700 uppercase mb-2">Surgical Changes Applied by ReviserNode</h4>
+                  <div class="bg-blue-50 border border-blue-200 rounded-lg p-3.5 text-xs text-blue-900 whitespace-pre-wrap font-mono">${a.changes_made}</div>
+                </div>
+              ` : ''}
+            </div>
+          </div>
+        `;
+      }).join('');
+    } else {
+      container.innerHTML = '<div class="bg-white p-8 text-center text-slate-500 rounded-2xl border border-slate-200">No rejection records found.</div>';
+    }
+  </script>
+</body>
+</html>

@@ -1,15 +1,17 @@
 {
   "version": "2.0.0-proposed",
-  "generated_at": "2026-11-07T13:20:31.425203",
+  "generated_at": "2026-11-07T14:28:19.162929",
   "proposed_by": "ReflectorNode",
   "changelog": [
-    "Enhanced jargon_defined criteria based on 11 historical occurrences: terms must be defined in the same initial clause."
+    "Enhanced jargon_defined criteria based on 16 historical occurrences: terms must be defined in the same initial clause."
   ],
   "historical_failure_statistics": {
-    "jargon_defined": 11
+    "jargon_defined": 16,
+    "no_idioms": 1
   },
   "active_learned_rules_applied": [
-    "Define every specialized term (e.g. embeddings, chunking, vector database) with simple words right inside the first sentence it is introduced."
+    "Define every specialized term (e.g. embeddings, chunking, vector database) with simple words right inside the first sentence it is introduced.",
+    "Use strictly literal language. Avoid all colloquial phrases or English idioms such as 'from scratch', 'silver bullet', or 'bite the bullet'."
   ],
   "name": "Lesson Quality & Pedagogy Rubric for Beginner Learners (v2 Proposed)",
   "description": "10 hard pass/fail checkpoints ensuring pedagogical clarity, accessibility, and strict factual correctness for Indian 12th-grade graduates starting AI careers. [Evolved via Self-Reflection]",

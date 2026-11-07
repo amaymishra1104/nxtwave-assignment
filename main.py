@@ -57,6 +57,12 @@ def main():
         default=None,
         help="Re-render Rich CLI presentation for a saved run ID (or 'latest') without making API calls",
     )
+    parser.add_argument(
+        "--browser",
+        "--open",
+        action="store_true",
+        help="Open interactive visual dashboard in web browser upon completion",
+    )
 
     args = parser.parse_args()
 
@@ -186,6 +192,10 @@ def main():
             failing_count=fewest_fails,
             lesson_path=lesson_file,
         )
+
+        if args.browser:
+            from src.browser_view import open_dashboard_in_browser
+            open_dashboard_in_browser(run_id=final_state.run_id)
 
     except Exception as e:
         logger.error(f"Execution failed: {e}", exc_info=True)
