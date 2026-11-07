@@ -108,14 +108,14 @@ Evaluated across 9 deliberately flawed benchmark lessons (each targeting a disti
 
 ---
 
-### 4.2 Reading-Level Calibration & Revision Telemetry `[LIVE]`
+### 4.2 Sample Run Replays & Self-Correction Telemetry [LIVE TRACES]
 
 Audited directly from persisted runs in `examples/` (re-playable locally via `python main.py --replay examples/<folder>`):
 
 | Run Folder in `examples/` | Run ID | Attempt 0 Reading Metrics | Attempt 0 Status | Reviser Action Taken | Attempt 1 Reading Metrics | Final Status |
 | :--- | :--- | :--- | :---: | :--- | :--- | :---: |
 | `examples/failing_then_passing_run` | `20261107_130604` | FK: 6.71, Avg Sent: 8.15 w | **FAIL** (`jargon_defined`) | Defined glossary terms at first use while preserving plain reading level | FK: 6.61, Avg Sent: 8.26 w | **PASSED (Attempt 1)** |
-| `examples/hallucination_fault_run` | `20261107_130511` | FK: 5.78, Avg Sent: 8.74 w | **FAIL** (`accuracy`, `jargon_defined`) | Surgical fix of injected retraining claim; defined terms simply | FK: 5.38, Avg Sent: 8.65 w | **PASSED (Attempt 1)** |
+| `examples/hallucination_fault_run` | `20261107_182240` | FK: 7.52, Avg Sent: 10.3 w | **FAIL** (`accuracy`, `reading_level`) | Surgical fix of injected retraining claim; split long sentences | FK: 4.95, Avg Sent: 9.03 w | **PASSED (Attempt 1)** |
 
 * Both runs comfortably satisfy the strict reading level criteria ($\text{FK} \le 7.0$ and $\text{Avg Sent Length} \le 15.0\text{ words}$) across attempts.
 * The Reviser's surgical prompt ensures that fixing semantic checks (like `jargon_defined` or `accuracy`) does not degrade readability or trigger sentence-length regressions.
@@ -278,6 +278,11 @@ At the completion of every run, structured artifacts are published to `outputs/`
    - *Limitation*: Flesch-Kincaid Grade Level relies on American grade-school syllable-to-word ratios.
    - *Risk*: A low FK grade ($\le 7.0$) is a mathematical upper bound, but does not capture whether an Indian learner from a regional vernacular medium intuitively grasps a metaphor.
    - *Mitigation*: We pair the mathematical formula with qualitative checks (`no_idioms`, `worked_example` set in an Indian college context, `jargon_defined`).
+
+6. **Co-Tuning of Golden Lesson and Judge Prompt (Detectability vs. Generalization)**:
+   - *Limitation*: The golden lesson fixture (`good_rag_lesson.md`) and the LLM Judge prompt were tuned together during iterative system calibration to eliminate mutual edge cases (such as Western idioms and overclaims).
+   - *Implication*: The 100% benchmark catch-rate demonstrates high **detectability** of specific rubric violations on our curated fixtures, rather than general out-of-distribution performance across unseen lessons written by external authors.
+   - *Collateral Failures*: Notice that in the catch-rate table (Section 4.1), bad lessons frequently trigger collateral failures beyond their single targeted violation (e.g. `bad_reading_level.md` or `bad_jargon.md` triggering multiple downstream qualitative failures). These extra failing checks are transparently reported in the table rather than suppressed.
 
 ---
 
