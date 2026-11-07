@@ -161,3 +161,4 @@ class LessonState(BaseModel):
     learned_rules: List[str] = []
     attempts: List[LessonAttempt] = []
 ```
+

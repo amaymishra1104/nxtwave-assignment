@@ -1,29 +1,15 @@
 {
   "version": "2.0.0-proposed",
-  "generated_at": "2026-11-07T13:09:53.382090",
+  "generated_at": "2026-11-07T13:20:31.425203",
   "proposed_by": "ReflectorNode",
   "changelog": [
-    "Clarified reading_level guidance based on 1 historical failures: recommend <= 12 words per sentence.",
     "Enhanced jargon_defined criteria based on 11 historical occurrences: terms must be defined in the same initial clause."
   ],
   "historical_failure_statistics": {
-    "wrap_up": 12,
-    "jargon_defined": 11,
-    "accuracy": 5,
-    "worked_example": 3,
-    "what_why_how": 3,
-    "no_idioms": 3,
-    "key_points": 3,
-    "coherent_flow": 3,
-    "analogy": 3,
-    "reading_level": 1
+    "jargon_defined": 11
   },
   "active_learned_rules_applied": [
-    "Conclude the lesson with a key summary and exactly three numbered questions in the Self-Check section.",
-    "Define every specialized term (e.g. embeddings, chunking, vector database) with simple words right inside the first sentence it is introduced.",
-    "Explicitly clarify that RAG does NOT retrain or alter model weights; the base model stays completely frozen while external text is fetched.",
-    "Keep all sentences very short (strictly under 12 words) and use everyday high-school vocabulary to maintain Grade <= 7 readability.",
-    "Use strictly literal language. Avoid all colloquial phrases or English idioms such as 'from scratch', 'silver bullet', or 'bite the bullet'."
+    "Define every specialized term (e.g. embeddings, chunking, vector database) with simple words right inside the first sentence it is introduced."
   ],
   "name": "Lesson Quality & Pedagogy Rubric for Beginner Learners (v2 Proposed)",
   "description": "10 hard pass/fail checkpoints ensuring pedagogical clarity, accessibility, and strict factual correctness for Indian 12th-grade graduates starting AI careers. [Evolved via Self-Reflection]",

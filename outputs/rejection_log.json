@@ -1,12 +1,12 @@
 {
-  "run_id": "20261107_130604",
-  "topic": "Introduction to RAG",
+  "run_id": "20261107_131710",
+  "topic": "Introduction to RAG (Retrieval-Augmented Generation)",
   "status": "passed",
   "attempts_count": 2,
   "rejection_log": [
     {
       "attempt_number": 0,
-      "timestamp": "2026-11-07T13:06:13.414959",
+      "timestamp": "2026-11-07T13:17:24.445769",
       "evaluation": {
         "passed": false,
         "failing_checks": [
@@ -15,8 +15,8 @@
         "failed_check_details": [
           {
             "check_id": "jargon_defined",
-            "reason": "[CIRCULAR DEFINITION] + [Section: Step Three: Vector Database] + [The definition of 'vector database' uses the term 'embeddings' which is a technical term, and the definition of 'embeddings' uses 'dense numerical vectors' which is jargon. The definition needs to be simplified for a non-technical learner.]",
-            "evidence_quote": "A vector database is a special database that indexes high-dimensional embeddings to perform fast similarity searches."
+            "reason": "[CIRCULAR DEFINITION] + [SECTION: Embeddings] + [The definition 'Embeddings are dense numerical vectors representing the semantic meaning of text chunks' uses technical jargon 'dense numerical vectors' and 'semantic meaning' without simple explanation for a beginner.]",
+            "evidence_quote": "Embeddings are dense numerical vectors representing the semantic meaning of text chunks."
           }
         ]
       },
@@ -24,13 +24,13 @@
     },
     {
       "attempt_number": 1,
-      "timestamp": "2026-11-07T13:06:35.910615",
+      "timestamp": "2026-11-07T13:17:34.182181",
       "evaluation": {
         "passed": true,
         "failing_checks": [],
         "failed_check_details": []
       },
-      "changes_made": "- Fixed jargon_defined by rewriting the definition of 'vector database' in simple words to avoid relying on other technical terms like 'high-dimensional embeddings'."
+      "changes_made": "- Fixed the jargon_defined check by replacing the circular definition in the Embeddings section with a clear, simple explanation avoiding heavy technical jargon like 'dense numerical vectors' and 'semantic meaning'."
     }
   ]
 }

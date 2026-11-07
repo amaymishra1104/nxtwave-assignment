@@ -43,10 +43,16 @@ class MemoryStore:
                     status TEXT NOT NULL,
                     attempt_count INTEGER NOT NULL,
                     final_passed INTEGER NOT NULL,
+                    fault_injected INTEGER DEFAULT 0,
                     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
                 )
                 """
             )
+            # Ensure column exists if table was previously created without it
+            try:
+                cursor.execute("ALTER TABLE runs ADD COLUMN fault_injected INTEGER DEFAULT 0")
+            except sqlite3.OperationalError:
+                pass  # column already exists
 
             # Attempts table
             cursor.execute(
@@ -107,10 +113,11 @@ class MemoryStore:
             final_passed = 1 if (best_attempt and best_attempt.evaluation and best_attempt.evaluation.passed) else 0
 
             # 1. Upsert run
+            fault_flag = 1 if (getattr(state, "fault_to_inject", None) is not None) else 0
             cursor.execute(
                 """
-                INSERT OR REPLACE INTO runs (run_id, topic, status, attempt_count, final_passed, created_at)
-                VALUES (?, ?, ?, ?, ?, ?)
+                INSERT OR REPLACE INTO runs (run_id, topic, status, attempt_count, final_passed, fault_injected, created_at)
+                VALUES (?, ?, ?, ?, ?, ?, ?)
                 """,
                 (
                     state.run_id,
@@ -118,6 +125,7 @@ class MemoryStore:
                     state.status,
                     len(state.attempts),
                     final_passed,
+                    fault_flag,
                     datetime.now().isoformat(),
                 ),
             )
@@ -247,15 +255,16 @@ class MemoryStore:
             return [r["rule_text"] for r in rows]
 
     def get_failure_frequency(self) -> Dict[str, int]:
-        """Get total historical failure count per check ID across all runs."""
+        """Get total historical failure count per check ID across natural (non-injected) runs."""
         with self._get_connection() as conn:
             cursor = conn.cursor()
             cursor.execute(
                 """
-                SELECT check_id, COUNT(*) as fail_count
-                FROM check_results
-                WHERE passed = 0
-                GROUP BY check_id
+                SELECT cr.check_id, COUNT(*) as fail_count
+                FROM check_results cr
+                JOIN runs r ON cr.run_id = r.run_id
+                WHERE cr.passed = 0 AND r.fault_injected = 0
+                GROUP BY cr.check_id
                 ORDER BY fail_count DESC
                 """
             )

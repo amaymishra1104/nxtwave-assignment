@@ -220,10 +220,13 @@ def replay_saved_run(run_id_or_path: str):
         target_dir = all_runs[-1]
     else:
         direct_path = Path(run_id_or_path)
+        examples_dir = Path("examples")
         if direct_path.is_dir():
             target_dir = direct_path
         elif (runs_dir / run_id_or_path).is_dir():
             target_dir = runs_dir / run_id_or_path
+        elif (examples_dir / run_id_or_path).is_dir():
+            target_dir = examples_dir / run_id_or_path
 
     if not target_dir or not target_dir.exists():
         console.print(f"[bold red]Run directory '{run_id_or_path}' not found.[/bold red]")
@@ -283,3 +286,4 @@ def replay_saved_run(run_id_or_path: str):
         failing_count=fewest_fails,
         lesson_path=settings.output_dir / "lesson.md",
     )
+

@@ -106,4 +106,22 @@ During development and rigorous empirical testing between Milestone 2 and Milest
 | **`wrap_up`** & **`required_structure`** | Section title verification failed if the heading included a pedagogical contextual subtitle (e.g. `## Worked Example: College Admission Chatbot`). | The check regex expected exact literal string matches for `## Worked Example` without trailing contextual titles. | Adjusted section header matching to accept pedagogical colons and contextual suffixes (`## Worked Example: ...`, `## Real-World Scenario: ...`). | Preserves strict structural enforcement (Worked Example, Summary, Self-Check) while allowing descriptive educational labels. |
 | **`reading_level`** (Diagnostic Feedback) | Evaluation failure reasons only supplied aggregate numbers (`FK 7.8 > 7.0`). | The Reviser agent was forced to guess which sentences inflated the grade, occasionally rewriting sections that were already simple. | The diagnostic engine now extracts and explicitly quotes every sentence exceeding 15 words and lists polysyllabic non-glossary words directly in the failure message passed to the Reviser. | Golden lesson score unaffected; live generation runs successfully converge from failed attempt 0 to fully passing attempt 1 or 2. |
 
+---
+
+## 7. Synthetic Fault Isolation in Telemetry & Memory Governance
+
+### The Problem of Synthetic Contamination
+In agentic self-evolution systems, developers frequently run integration tests with synthetic fault injection (e.g. `--inject-fault hallucination`) to verify that the Evaluator catches violations and the Reviser repairs them. If the Reflector naively processes every run, it will extract rules for synthetic flaws that the Generator never naturally committed. For example, injecting a false statement about fine-tuning neural network weights caused the Reflector to synthesize a rule specifically warning against retraining weights, despite the natural Generator having never made that mistake.
+
+### Architectural Solution
+1. **Schema Attribution (`runs.fault_injected`)**:
+   The `runs` SQLite table now records a dedicated boolean flag `fault_injected INTEGER DEFAULT 0`. Any run triggered with `--inject-fault` is stamped with `fault_injected = 1`.
+2. **Reflector Bypass**:
+   When `state.fault_to_inject is not None`, the `ReflectorNode` persists the telemetry for auditable tracing but **skips all rule extraction and recurrence counting**.
+3. **Failure Frequency Filtering**:
+   The telemetry query `get_failure_frequency()` joins `check_results` with `runs` filtering `WHERE runs.fault_injected = 0`. Historical failure distributions and proposed rubric updates reflect exclusively organic model behavior.
+4. **Purge of Injected Rules**:
+   Any rules whose sole historical evidence derived from injected faults (such as the synthetic `accuracy` rule) have been purged from `learned_rules`.
+
+
 

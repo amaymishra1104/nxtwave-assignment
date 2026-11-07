@@ -77,16 +77,17 @@ def main():
     graph = build_lesson_graph()
 
     if args.demo_evolution:
-        print("\n>>> DEMO EVOLUTION MODE ACTIVATED (Amendment 9) <<<")
-        print("Running 3 sequential iterations to demonstrate rule synthesis, persistence, and prompt injection.\n")
+        print("\n>>> DEMO EVOLUTION MODE ACTIVATED (5 Iterations) <<<")
+        print("Running 5 sequential iterations to demonstrate rule synthesis, persistence, and prompt injection.\n")
 
         from src.memory.store import MemoryStore
         store = MemoryStore()
         history = []
 
-        for iteration in range(1, 4):
+        total_iterations = 5
+        for iteration in range(1, total_iterations + 1):
             print(f"\n=======================================================")
-            print(f"            EVOLUTION RUN {iteration} OF 3")
+            print(f"            EVOLUTION RUN {iteration} OF {total_iterations}")
             print(f"=======================================================")
 
             # Check rules before run
@@ -104,8 +105,8 @@ def main():
 
             state = LessonState(
                 topic=args.topic,
-                max_retries=1,  # Keep attempts fast for demo
-                fault_to_inject="hallucination" if iteration == 1 else None,
+                max_retries=args.max_retries,
+                fault_to_inject=None,
             )
 
             final_state_dict = graph.invoke(state)

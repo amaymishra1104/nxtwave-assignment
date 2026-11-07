@@ -38,8 +38,18 @@ def reflector_node(state: LessonState, store: Optional[MemoryStore] = None) -> D
     if store is None:
         store = MemoryStore()
 
-    # 1. Persist run to SQLite memory store
+    # 1. Persist run to SQLite memory store (marked with fault_injected if applicable)
     store.save_run(state)
+
+    # If this run had a synthetic fault injected, skip rule extraction to avoid artificial contamination
+    if getattr(state, "fault_to_inject", None) is not None:
+        logger.info(
+            f"Run '{state.run_id}' was fault-injected ('{state.fault_to_inject}'). "
+            "Skipping rule extraction to prevent synthetic contamination of learned memory."
+        )
+        return {
+            "learned_rules": store.get_top_active_rules(limit=settings.active_rules_limit),
+        }
 
     # 2. Extract failing patterns from current run and historical memory
     failing_in_current_run = set()

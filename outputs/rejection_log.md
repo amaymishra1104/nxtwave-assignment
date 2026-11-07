@@ -1,5 +1,5 @@
-# Rejection & Revision Log: Introduction to RAG
-- **Run ID**: `20261107_130604`
+# Rejection & Revision Log: Introduction to RAG (Retrieval-Augmented Generation)
+- **Run ID**: `20261107_131710`
 - **Final Status**: `PASSED`
 - **Total Attempts**: 2
 
@@ -9,8 +9,8 @@
 - **Failing Checks**: `jargon_defined`
 
 ### Diagnostic Critique:
-- **jargon_defined**: [CIRCULAR DEFINITION] + [Section: Step Three: Vector Database] + [The definition of 'vector database' uses the term 'embeddings' which is a technical term, and the definition of 'embeddings' uses 'dense numerical vectors' which is jargon. The definition needs to be simplified for a non-technical learner.]
-  > *Evidence Quote:* "A vector database is a special database that indexes high-dimensional embeddings to perform fast similarity searches."
+- **jargon_defined**: [CIRCULAR DEFINITION] + [SECTION: Embeddings] + [The definition 'Embeddings are dense numerical vectors representing the semantic meaning of text chunks' uses technical jargon 'dense numerical vectors' and 'semantic meaning' without simple explanation for a beginner.]
+  > *Evidence Quote:* "Embeddings are dense numerical vectors representing the semantic meaning of text chunks."
 
 ---
 
@@ -19,6 +19,6 @@
 - All 10 checks passed successfully.
 
 ### Surgical Changes Made:
-- Fixed jargon_defined by rewriting the definition of 'vector database' in simple words to avoid relying on other technical terms like 'high-dimensional embeddings'.
+- Fixed the jargon_defined check by replacing the circular definition in the Embeddings section with a clear, simple explanation avoiding heavy technical jargon like 'dense numerical vectors' and 'semantic meaning'.
 
 ---

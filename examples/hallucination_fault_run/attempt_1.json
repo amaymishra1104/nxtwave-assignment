@@ -1,0 +1,70 @@
+{
+  "run_id": "20261107_130511",
+  "attempt_number": 1,
+  "passed": true,
+  "failing_checks": [],
+  "changes_made": "- Fixed accuracy: Removed the incorrect technical detail claiming RAG retrains model weights, replacing it with the correct fact that RAG keeps model weights frozen while reading external documents.\n- Fixed jargon_defined: Replaced complex definitions in Step 2 and Step 3 with simple, intuitive explanations (e.g., explaining embeddings as secret number codes that capture meaning instead of dense numerical vectors, and defining vector databases simply as digital filing cabinets).",
+  "checks": [
+    {
+      "check_id": "accuracy",
+      "passed": true,
+      "reason": "The lesson accurately describes RAG as an external knowledge retrieval process that does not modify model weights, consistent with the provided fact pack.",
+      "evidence_quote": ""
+    },
+    {
+      "check_id": "what_why_how",
+      "passed": true,
+      "reason": "The lesson clearly defines RAG (what), explains the problem of hallucination and knowledge limits (why), and details the end-to-end process (how).",
+      "evidence_quote": ""
+    },
+    {
+      "check_id": "key_points",
+      "passed": true,
+      "reason": "All 8 mandatory concepts (retrieval, embeddings, vector database, chunking, augmenting the prompt, generation, hallucination reduction, limitations) are explicitly covered.",
+      "evidence_quote": ""
+    },
+    {
+      "check_id": "jargon_defined",
+      "passed": true,
+      "reason": "All glossary terms are defined at first use with clear, simple explanations.",
+      "evidence_quote": ""
+    },
+    {
+      "check_id": "reading_level",
+      "passed": true,
+      "reason": "FK Grade: 5.38 (target <= 7.0), Avg Sentence Length: 8.65 words (target <= 15.0).",
+      "evidence_quote": "A vector database is a special digital filing cabinet that stores these number codes so the computer can search through them very fast."
+    },
+    {
+      "check_id": "no_idioms",
+      "passed": true,
+      "reason": "The text is free of Western idioms and colloquialisms.",
+      "evidence_quote": ""
+    },
+    {
+      "check_id": "worked_example",
+      "passed": true,
+      "reason": "The lesson uses a concrete, relatable example of a college admission chatbot in an Indian context.",
+      "evidence_quote": "Let us look at a simple example from India. You want to join a local college. The college releases a new admission notice PDF circular."
+    },
+    {
+      "check_id": "analogy",
+      "passed": true,
+      "reason": "The lesson uses the intuitive open-book vs. closed-book exam analogy.",
+      "evidence_quote": "RAG is like an open-book exam for an AI model."
+    },
+    {
+      "check_id": "coherent_flow",
+      "passed": true,
+      "reason": "The lesson follows a logical progression from the problem to the solution, then breaks down the technical steps, and concludes with limitations.",
+      "evidence_quote": ""
+    },
+    {
+      "check_id": "wrap_up",
+      "passed": true,
+      "reason": "Concludes with summary and exactly 3 conceptual self-check questions.",
+      "evidence_quote": ""
+    }
+  ],
+  "content": "# Introduction to RAG\n\n## Welcome to AI Memory\n\nImagine a student taking a final exam. \nThe student sits in the exam hall. \nThe student is not allowed to open any book. \nThe student must write every answer using only memory. \nThis is called a closed-book test. \nNormal AI models work in the exact same way. \nAn AI model is a computer program that learns human language. \nIt stores facts inside its internal connections. \nThese internal connections are called neural network weights. \n\n## The Problem: Why AI Forgets and Hallucinates\n\nA normal AI model reads a lot of text during training. \nIt learns patterns from this training data. \nHowever, this training data stops at a certain date. \nThe AI cannot check new facts on the internet. \nIt has strict knowledge limits. \nSometimes, the AI does not know the true answer. \nInstead of staying silent, the AI invents a false answer. \nThis false answer looks very real. \nWe call this bad habit a hallucination. \nA hallucination is a fake answer made up by the AI. \nWe need a way to stop these hallucinations. \n\n## The Solution: What is RAG?\n\nRAG stands for Retrieval-Augmented Generation. \nRAG is like an open-book exam for an AI model. \nThe AI is given a book or a document to read during the test. \nIt looks at the document to find the correct answer. \nRAG connects the AI to an external knowledge store. \nAn external knowledge store is a file or a folder outside the AI model. \nRAG does not change the internal connections of the AI. \nIt leaves the neural network weights completely frozen. \nIt only fetches new text from the outside world. \nThis design makes RAG very cheap and fast. \n\n## Worked Example: College Admission Chatbot\n\nLet us look at a simple example from India. \nYou want to join a local college. \nThe college releases a new admission notice PDF circular. \nThe PDF contains exact dates for fee payment. \nYou ask an AI chatbot a question. \nYou ask, \"When is the last date to pay fees?\" \nA normal AI model will guess the date. \nIt will likely give you the wrong date. \nA RAG system will solve this problem easily. \nThe RAG system reads the PDF circular first. \nIt finds the exact fee date in the PDF. \nThen, it gives you the correct date. \n\n## Step 1: Preparing Knowledge with Chunking\n\nA college PDF circular is very long. \nAn AI model cannot read the whole PDF all at once. \nWe must cut the large document into smaller pieces. \nChunking is the process of splitting a large text file into smaller paragraphs. \nEach small paragraph is called a chunk. \nChunking helps the AI read text very easily. \n\n## Step 2: Understanding Meanings with Embeddings\n\nComputers only understand math numbers. \nThey do not understand English words directly. \nWe must convert text chunks into numbers. \nEmbeddings are secret number codes that capture the core meaning of sentences. \nSimilar sentences get numbers that are close to each other. \nThis helps the computer match questions with correct answers. \n\n## Step 3: Storing and Finding Data in a Vector Database\n\nWe must save all these numerical vectors in a safe place. \nA vector database is a special digital filing cabinet that stores these number codes so the computer can search through them very fast. \nIt stores millions of text chunks as numbers. \nWhen you type a question, the database compares your question numbers with the stored numbers. \nIt finds the most matching text chunk very quickly. \n\n## Step 4: The Search Process (Retrieval)\n\nRetrieval is the exact step of searching the database to find relevant text chunks. \nThe system takes your question. \nIt searches the vector database. \nIt pulls out the best matching paragraph from the college PDF. \nIt ignores all other unrelated paragraphs. \n\n## Step 5: Combining Question and Context (Augmenting the Prompt)\n\nNow the system has your question and the retrieved paragraph. \nAugmenting the prompt is the process of appending the retrieved passages directly into the prompt along with the user's question. \nThe prompt is the instruction text given to the AI. \nThe system gives the AI a new instruction. \nIt says, \"Read this paragraph and answer the user question.\" \n\n## Step 6: Delivering the Answer (Generation)\n\nGeneration is the final step where the AI writes a clear response for the user. \nThe AI reads the retrieved paragraph. \nIt writes a simple and polite sentence. \nIt tells you the exact last date to pay your college fees. \nThis answer is safe and true. \nIt also shows the source document name. \nThis is called provenance. \nProvenance means showing the exact origin of the information. \n\n## Why RAG Reduces Hallucinates\n\nRAG stops the AI from guessing. \nThe AI relies on the retrieved source text. \nIf the text says the date is Monday, the AI says Monday. \nThis grounds the answer in real facts. \nFactual errors drop down to a very low level. \n\n## Limitations and When RAG Fails\n\nRAG is very powerful, but it has flaws. \nRAG has a retrieval bottleneck. \nThis means if the retrieval step fails to find the correct chunk, the AI cannot answer. \nThe AI will still fail if the external document is missing the facts. \nAlso, searching databases takes a small amount of extra time. \nThis extra time is called latency. \n\n## Summary\n\n- RAG is an open-book method for AI models.\n- It fixes knowledge limits and stops false answers.\n- It uses chunking to cut long files into small parts.\n- It uses embeddings to turn words into math numbers.\n- It stores numbers in a vector database for quick search.\n- Retrieval finds the best matching text.\n- Prompt augmentation combines the question and the retrieved text.\n- Generation writes the final correct answer.\n- RAG does not change the core AI model weights.\n\n## Self-Check Questions\n\n1. What is the main difference between a normal AI model and a RAG model during an exam analogy?\n2. Why do we need chunking before putting text into a vector database?\n3. Does RAG retrain or change the internal neural network weights of the base AI model?"
+}

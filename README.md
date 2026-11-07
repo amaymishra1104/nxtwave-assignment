@@ -83,24 +83,56 @@ flowchart TD
 
 ---
 
-## 4. Benchmark & Evaluator Catch-Rate Table
+## 4. Empirical Results & Telemetry
 
-Tested across 8 deliberately flawed bad lessons (each engineered to violate specific rubric dimensions) and 1 golden lesson:
+### 4.1 Evaluator Catch-Rate Benchmark (Live Gemini API vs Offline Mock)
 
-| Test Lesson File | Targeted Violation | Live Gemini Judge Status | Extra Caught Checks |
-| :--- | :--- | :---: | :--- |
-| `bad_accuracy.md` | `accuracy` | **CAUGHT** | `reading_level` |
-| `bad_what_why_how.md` | `what_why_how` | **CAUGHT** | None |
-| `bad_key_points.md` | `key_points` | **CAUGHT** | None |
-| `bad_jargon.md` | `jargon_defined` | **CAUGHT** | None |
-| `bad_reading_level.md` | `reading_level` | **CAUGHT** | `no_idioms` |
-| `bad_no_idioms.md` | `no_idioms` | **CAUGHT** | None |
-| `bad_worked_example.md`| `worked_example` | **CAUGHT** | None |
-| `bad_wrap_up.md` | `wrap_up` | **CAUGHT** | None |
-| `good_rag_lesson.md` | *(Golden Lesson - All 10)* | **PASSED (10/10)** | Zero fails (100% certified) |
+Evaluated across 8 deliberately flawed benchmark lessons (each targeting a distinct rubric dimension) and 1 golden lesson:
 
-* **Bad Lessons Catch-Rate**: **8/8 (100.0%)** on the real Gemini live evaluator.
-* **Offline Unit Test Suite**: **24/24 tests passing in < 10s**.
+| Test Lesson File | Targeted Violation | Live Gemini Status `[LIVE]` | Offline Mock Status `[OFFLINE]` | Extra Caught Checks |
+| :--- | :--- | :---: | :---: | :--- |
+| `bad_accuracy.md` | `accuracy` | **CAUGHT** | **CAUGHT** | `reading_level` |
+| `bad_what_why_how.md` | `what_why_how` | **CAUGHT** | **CAUGHT** | None |
+| `bad_key_points.md` | `key_points` | **CAUGHT** | **CAUGHT** | None |
+| `bad_jargon.md` | `jargon_defined` | **CAUGHT** | **CAUGHT** | None |
+| `bad_reading_level.md` | `reading_level` | **CAUGHT** | **CAUGHT** | `no_idioms` |
+| `bad_no_idioms.md` | `no_idioms` | **CAUGHT** | **CAUGHT** | None |
+| `bad_worked_example.md`| `worked_example` | **CAUGHT** | **CAUGHT** | None |
+| `bad_wrap_up.md` | `wrap_up` | **CAUGHT** | **CAUGHT** | None |
+| `good_rag_lesson.md` | *(Golden Lesson - All 10)* | **PASSED (10/10)** | **PASSED (10/10)** | None (0 fails - 100% green) |
+
+* **Live Catch-Rate (`gemini-3.1-flash-lite`, temp=0.2)**: **8/8 (100.0%)** bad lessons caught; golden lesson passed 10/10.
+* **Offline Catch-Rate (deterministic code + unit test mocks)**: **8/8 (100.0%)** caught; golden lesson passed 10/10.
+* **Unit Test Suite**: **24/24 tests passing in 12.25s** (`pytest -m "not live"`).
+
+---
+
+### 4.2 Reading-Level Calibration & Revision Telemetry `[LIVE]`
+
+During calibration of the deterministic reading-level engine, three sequential live runs were audited to observe revision convergence from actionable diagnostic feedback:
+
+| Run ID | Attempt 0 Metrics | Attempt 0 Status | Reviser Action Taken | Final Shipped Metrics | Final Status |
+| :--- | :--- | :---: | :--- | :--- | :---: |
+| `20261107_123119` | FK: 7.92, Avg Sent: 10.4 w | **FAIL** | Split quoted sentences $>15$ words; replaced multi-syllable terms | FK: 6.42, Avg Sent: 8.9 w | **PASSED (Attempt 1)** |
+| `20261107_123622` | FK: 7.68, Avg Sent: 10.1 w | **FAIL** | Targeted revision of 4 polysyllabic sentences cited in critique | FK: 6.12, Avg Sent: 8.5 w | **PASSED (Attempt 1)** |
+| `20261107_125743` | FK: 5.85, Avg Sent: 7.8 w | **PASS** | Zero revision needed (passed directly on Attempt 0 with style rules) | FK: 5.85, Avg Sent: 7.8 w | **PASSED (Attempt 0)** |
+
+---
+
+### 4.3 Persistent Memory & Evolution Telemetry (5-Iteration Live Demo) `[LIVE]`
+
+Executed from a clean database state to observe rule synthesis, recurrence reinforcement, prompt injection, and attempt-0 progression:
+
+| Iteration | Active Rules Loaded from Memory | Injected Rules Applied to Prompt | Attempt 0 Status | Attempts Needed | Final Status | Rules Updated in SQLite |
+| :---: | :---: | :--- | :---: | :---: | :---: | :--- |
+| **1** | 0 (Cold Start) | None (Cold start) | **FAILED** (`jargon_defined`) | 3 | `REVISING` | Rule #1 synthesized for `jargon_defined` (count: 1) |
+| **2** | 1 | Rule #1 (`jargon_defined`) | **FAILED** (`jargon_defined`) | 2 | **PASSED** | Rule #1 reinforced (count: 2) |
+| **3** | 1 | Rule #1 (`jargon_defined`) | **FAILED** (`jargon_defined`) | 3 | `REVISING` | Rule #1 reinforced (count: 3) |
+| **4** | 1 | Rule #1 (`jargon_defined`) | **PASSED (0 fails)** | **1** | **PASSED** | Rule #1 active (count: 3) |
+| **5** | 1 | Rule #1 (`jargon_defined`) | **FAILED** (`jargon_defined`) | 3 | `REVISING` | Rule #1 reinforced (count: 4) |
+
+> **Scientific Note on Memory Telemetry**:  
+> As observed in a small sample ($N=5$), memory injection successfully supplies learned pedagogical priors into the drafting prompt. However, due to natural LLM sampling stochasticity, learned rules improve structural consistency but do not guarantee deterministic zero-shot convergence on every single generation attempt.
 
 ---
 
@@ -155,7 +187,7 @@ python main.py --inject-fault no_quiz
 ```
 
 ### 3. Memory & Self-Evolution Demo
-Runs 3 sequential iterations demonstrating cold start, failure pattern extraction, rule persistence in SQLite, rule injection into the prompt, and attempt-0 failure reduction:
+Runs 5 sequential iterations demonstrating cold start, failure pattern extraction, rule persistence in SQLite, rule injection into the prompt, and attempt-0 progression:
 ```bash
 python main.py --demo-evolution
 ```
@@ -163,11 +195,14 @@ python main.py --demo-evolution
 ### 4. Zero-API Replay Mode (Rich CLI)
 Re-renders the visual Rich UI (evaluation grids, rejection critique, verbatim evidence quotes, and certification card) for any past run without spending API tokens:
 ```bash
-# Replay latest run:
-python main.py --replay latest
+# Replay failing-then-passing real run (zero API keys needed):
+python main.py --replay examples/failing_then_passing_run
 
-# Replay specific run ID:
-python main.py --replay 20261107_130604
+# Replay deliberate hallucination fault injection run:
+python main.py --replay examples/hallucination_fault_run
+
+# Replay latest live run:
+python main.py --replay latest
 ```
 
 ### 5. Running the Test Suite
@@ -215,17 +250,29 @@ At the completion of every run, structured artifacts are published to `outputs/`
 
 ## 9. Honest Limitations & Vulnerabilities
 
-1. **Same-Family Provider Risk**:
+1. **Judge and Generator Same Model Family**:
    - *Limitation*: Currently, both the Generator (`gemini-3.5-flash-lite`) and Judge (`gemini-3.1-flash-lite`) originate from Google's Gemini family.
-   - *Risk*: Models trained on similar RLHF datasets may share blindspots regarding subtle tone subtleties or cultural nuances.
-   - *Production Solution*: In high-stakes production environments, deploy cross-family evaluation (e.g. Anthropic Claude 3.5 Sonnet or OpenAI GPT-4o as judge) or specialized discriminator models.
-2. **Readability Formula Calibration**:
-   - *Limitation*: Flesch-Kincaid Grade Level relies on syllable counts and sentence length, designed primarily for native English students in American grade schools.
-   - *Risk*: A low FK grade ($\le 7.0$) does not automatically guarantee Indian regional comprehensibility if technical metaphors are too abstract.
-   - *Mitigation*: We pair the mathematical formula with qualitative checks (`no_idioms`, `worked_example` with an Indian context, `jargon_defined`).
-3. **Free-Tier Rate Limits**:
-   - *Limitation*: Free-tier API quotas impose strict requests-per-minute (RPM) limits.
-   - *Mitigation*: Implemented exponential backoff with jitter on HTTP 429/503 errors and single-pass structured judge calls returning all qualitative checks in one request.
+   - *Risk*: Models trained on similar RLHF datasets and foundation architectures may share subtle stylistic blindspots or correlated errors.
+   - *Production Solution*: In enterprise deployments, enforce multi-provider cross-evaluation (e.g. using Anthropic Claude 3.5 Sonnet or OpenAI GPT-4o as judge) or train dedicated fine-tuned discriminator classifiers.
+
+2. **Small Empirical Samples**:
+   - *Limitation*: Our benchmarks were validated across $N=8$ bad lessons, $N=3$ reading-level calibration runs, and $N=5$ memory evolution iterations.
+   - *Risk*: While sufficient to prove architectural correctness, state transitions, and deterministic check rigor, these sample sizes do not yield tight statistical confidence intervals across diverse STEM domains.
+   - *Production Solution*: Conduct automated Monte Carlo evaluation across hundreds of lesson topics and diverse learner demographics.
+
+3. **LLM Stochasticity & Temperature Variance**:
+   - *Limitation*: Even with low sampling temperatures ($0.2$ for judge, $0.7$ for generator), LLM token generation remains probabilistic.
+   - *Impact*: Injected memory rules supply strong guidance, but random sampling variance means prompt injection does not guarantee deterministic zero-shot pass rates on every single attempt.
+
+4. **Small, Manually Curated Fact Pack**:
+   - *Limitation*: `data/fact_pack.json` contains 12 verified facts focused exclusively on introductory RAG from Lewis et al. (2020).
+   - *Risk*: While accurate and verifiable, manually authoring fact packs does not scale to thousands of topics.
+   - *Production Solution*: Integrate an automated grounding pipeline that ingests canonical documentation and peer-reviewed arXiv papers into an enterprise retrieval engine with citation verification.
+
+5. **Readability Formula Calibration**:
+   - *Limitation*: Flesch-Kincaid Grade Level relies on American grade-school syllable-to-word ratios.
+   - *Risk*: A low FK grade ($\le 7.0$) is a mathematical upper bound, but does not capture whether an Indian learner from a regional vernacular medium intuitively grasps a metaphor.
+   - *Mitigation*: We pair the mathematical formula with qualitative checks (`no_idioms`, `worked_example` set in an Indian college context, `jargon_defined`).
 
 ---
 
@@ -274,3 +321,4 @@ At the completion of every run, structured artifacts are published to `outputs/`
     ├── good_lessons/           # 1 golden lesson passing 10/10
     └── test_evaluator.py       # Offline and live catch-rate benchmark suite
 ```
+
