@@ -8,7 +8,7 @@
   },
   {
     "id": "fact_02",
-    "fact": "In standard RAG inference, the external knowledge can be updated, expanded, or replaced without modifying, retraining, or fine-tuning the underlying model weights.",
+    "fact": "In standard RAG, at answer time, new documents can be added without retraining the model.",
     "source_name": "Lewis et al. (2020) - arXiv:2005.11401 Section 1",
     "source_url": "https://arxiv.org/abs/2005.11401",
     "category": "weights_and_training"
@@ -22,7 +22,7 @@
   },
   {
     "id": "fact_04",
-    "fact": "Dense Passage Retrieval (DPR) uses neural bi-encoders to convert text queries and document passages into continuous dense vector representations for similarity search.",
+    "fact": "Dense Passage Retrieval (DPR) converts text questions and document passages into lists of numbers (dense vectors) so the computer can quickly find matching meanings.",
     "source_name": "Karpukhin et al. (2020) / Lewis et al. (2020) Section 2.1",
     "source_url": "https://arxiv.org/abs/2004.04906",
     "category": "retrieval"
@@ -50,7 +50,7 @@
   },
   {
     "id": "fact_08",
-    "fact": "A vector database indexes high-dimensional embeddings to perform fast approximate nearest neighbor (ANN) search across millions of text chunks.",
+    "fact": "A vector database is a specialized storage system that organizes and stores embeddings to rapidly match and retrieve text chunks with similar meanings across millions of items.",
     "source_name": "Pinecone Learning Center - What is a Vector Database?",
     "source_url": "https://www.pinecone.io/learn/vector-database/",
     "category": "vector_database"

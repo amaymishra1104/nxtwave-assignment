@@ -151,7 +151,7 @@ def test_mocked_llm_judge_catches_violation_with_quote():
             {
                 "check_id": "accuracy",
                 "passed": False,
-                "reason": "Claims model weights are retrained. Occurs in paragraph 1. Must clarify that weights remain frozen.",
+                "reason": "Claims model weights are retrained. Occurs in paragraph 1. Must clarify that at answer time, new documents can be added without retraining the model.",
                 "evidence_quote": "RAG works by retraining the entire model weights on your PDF documents.",
             }
         ]

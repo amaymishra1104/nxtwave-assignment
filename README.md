@@ -70,7 +70,7 @@ flowchart TD
 
 | # | Check ID | Type | Hard Standard / Criterion | Threshold / Rule |
 | :-: | :--- | :--- | :--- | :--- |
-| **1** | `accuracy` | LLM Judge | Factual alignment with Lewis et al. (2020). Base model weights must remain completely frozen; RAG never modifies weights. | Binary (Pass/Fail) |
+| **1** | `accuracy` | LLM Judge | Factual alignment with Lewis et al. (2020). Clarifies that at answer time, new documents can be added without retraining the model. Must never claim RAG completely stops or eliminates hallucinations (it only reduces them). | Binary (Pass/Fail) |
 | **2** | `what_why_how` | LLM Judge | Dedicated coverage answering: (1) What RAG is, (2) Why models hallucinate/need it, (3) How retrieval augments the prompt. | Binary (Pass/Fail) |
 | **3** | `key_points` | LLM Judge | Explicit pedagogical coverage of all 8 mandatory concepts: retrieval, embeddings, vector database, chunking, prompt augmentation, generation, hallucination reduction, limitations. | All 8 required |
 | **4** | `jargon_defined` | Hybrid | All 12 glossary terms defined at first use with zero prior technical knowledge assumed. | Zero ungrounded jargon |
@@ -87,35 +87,38 @@ flowchart TD
 
 ### 4.1 Evaluator Catch-Rate Benchmark (Live Gemini API vs Offline Mock)
 
-Evaluated across 8 deliberately flawed benchmark lessons (each targeting a distinct rubric dimension) and 1 golden lesson:
+Evaluated across 9 deliberately flawed benchmark lessons (each targeting a distinct rubric dimension) and 1 golden lesson:
 
 | Test Lesson File | Targeted Violation | Live Gemini Status `[LIVE]` | Offline Mock Status `[OFFLINE]` | Extra Caught Checks |
 | :--- | :--- | :---: | :---: | :--- |
-| `bad_accuracy.md` | `accuracy` | **CAUGHT** | **CAUGHT** | `reading_level` |
-| `bad_what_why_how.md` | `what_why_how` | **CAUGHT** | **CAUGHT** | None |
-| `bad_key_points.md` | `key_points` | **CAUGHT** | **CAUGHT** | None |
-| `bad_jargon.md` | `jargon_defined` | **CAUGHT** | **CAUGHT** | None |
-| `bad_reading_level.md` | `reading_level` | **CAUGHT** | **CAUGHT** | `no_idioms` |
-| `bad_no_idioms.md` | `no_idioms` | **CAUGHT** | **CAUGHT** | None |
-| `bad_worked_example.md`| `worked_example` | **CAUGHT** | **CAUGHT** | None |
+| `bad_accuracy.md` | `accuracy` | **CAUGHT** | **CAUGHT** | None |
+| `bad_overclaim.md` | `accuracy` | **CAUGHT** | **CAUGHT** | `no_idioms` |
+| `bad_what_why_how.md` | `what_why_how` | **CAUGHT** | **CAUGHT** | `key_points` |
+| `bad_key_points.md` | `key_points` | **CAUGHT** | **CAUGHT** | `jargon_defined` |
+| `bad_jargon.md` | `jargon_defined` | **CAUGHT** | **CAUGHT** | `accuracy`, `what_why_how`, `key_points`, `reading_level` |
+| `bad_reading_level.md` | `reading_level` | **CAUGHT** | **CAUGHT** | `accuracy`, `what_why_how`, `key_points`, `jargon_defined`, `worked_example`, `analogy`, `coherent_flow`, `wrap_up` |
+| `bad_no_idioms.md` | `no_idioms` | **CAUGHT** | **CAUGHT** | `what_why_how`, `key_points`, `jargon_defined` |
+| `bad_worked_example.md`| `worked_example` | **CAUGHT** | **CAUGHT** | `wrap_up` |
 | `bad_wrap_up.md` | `wrap_up` | **CAUGHT** | **CAUGHT** | None |
 | `good_rag_lesson.md` | *(Golden Lesson - All 10)* | **PASSED (10/10)** | **PASSED (10/10)** | None (0 fails - 100% green) |
 
-* **Live Catch-Rate (`gemini-3.1-flash-lite`, temp=0.2)**: **8/8 (100.0%)** bad lessons caught; golden lesson passed 10/10.
-* **Offline Catch-Rate (deterministic code + unit test mocks)**: **8/8 (100.0%)** caught; golden lesson passed 10/10.
-* **Unit Test Suite**: **24/24 tests passing in 12.25s** (`pytest -m "not live"`).
+* **Live Catch-Rate (`gemini-3.1-flash-lite`, temp=0.2)**: **9/9 (100.0%)** bad lessons caught; golden lesson passed 10/10.
+* **Offline Catch-Rate (deterministic code + unit test mocks)**: **9/9 (100.0%)** caught; golden lesson passed 10/10.
+* **Unit Test Suite**: **24/24 tests passing** (`pytest -m "not live"`).
 
 ---
 
 ### 4.2 Reading-Level Calibration & Revision Telemetry `[LIVE]`
 
-During calibration of the deterministic reading-level engine, three sequential live runs were audited to observe revision convergence from actionable diagnostic feedback:
+Audited directly from persisted runs in `examples/` (re-playable locally via `python main.py --replay examples/<folder>`):
 
-| Run ID | Attempt 0 Metrics | Attempt 0 Status | Reviser Action Taken | Final Shipped Metrics | Final Status |
-| :--- | :--- | :---: | :--- | :--- | :---: |
-| `20261107_123119` | FK: 7.92, Avg Sent: 10.4 w | **FAIL** | Split quoted sentences $>15$ words; replaced multi-syllable terms | FK: 6.42, Avg Sent: 8.9 w | **PASSED (Attempt 1)** |
-| `20261107_123622` | FK: 7.68, Avg Sent: 10.1 w | **FAIL** | Targeted revision of 4 polysyllabic sentences cited in critique | FK: 6.12, Avg Sent: 8.5 w | **PASSED (Attempt 1)** |
-| `20261107_125743` | FK: 5.85, Avg Sent: 7.8 w | **PASS** | Zero revision needed (passed directly on Attempt 0 with style rules) | FK: 5.85, Avg Sent: 7.8 w | **PASSED (Attempt 0)** |
+| Run Folder in `examples/` | Run ID | Attempt 0 Reading Metrics | Attempt 0 Status | Reviser Action Taken | Attempt 1 Reading Metrics | Final Status |
+| :--- | :--- | :--- | :---: | :--- | :--- | :---: |
+| `examples/failing_then_passing_run` | `20261107_130604` | FK: 6.71, Avg Sent: 8.15 w | **FAIL** (`jargon_defined`) | Defined glossary terms at first use while preserving plain reading level | FK: 6.61, Avg Sent: 8.26 w | **PASSED (Attempt 1)** |
+| `examples/hallucination_fault_run` | `20261107_130511` | FK: 5.78, Avg Sent: 8.74 w | **FAIL** (`accuracy`, `jargon_defined`) | Surgical fix of injected retraining claim; defined terms simply | FK: 5.38, Avg Sent: 8.65 w | **PASSED (Attempt 1)** |
+
+* Both runs comfortably satisfy the strict reading level criteria ($\text{FK} \le 7.0$ and $\text{Avg Sent Length} \le 15.0\text{ words}$) across attempts.
+* The Reviser's surgical prompt ensures that fixing semantic checks (like `jargon_defined` or `accuracy`) does not degrade readability or trigger sentence-length regressions.
 
 ---
 
@@ -125,14 +128,16 @@ Executed from a clean database state to observe rule synthesis, recurrence reinf
 
 | Iteration | Active Rules Loaded from Memory | Injected Rules Applied to Prompt | Attempt 0 Status | Attempts Needed | Final Status | Rules Updated in SQLite |
 | :---: | :---: | :--- | :---: | :---: | :---: | :--- |
-| **1** | 0 (Cold Start) | None (Cold start) | **FAILED** (`jargon_defined`) | 3 | `REVISING` | Rule #1 synthesized for `jargon_defined` (count: 1) |
+| **1** | 0 (Cold Start) | None (Cold start) | **FAILED** (`jargon_defined`) | 3 | `NEEDS_HUMAN_REVIEW`* | Rule #1 synthesized for `jargon_defined` (count: 1) |
 | **2** | 1 | Rule #1 (`jargon_defined`) | **FAILED** (`jargon_defined`) | 2 | **PASSED** | Rule #1 reinforced (count: 2) |
-| **3** | 1 | Rule #1 (`jargon_defined`) | **FAILED** (`jargon_defined`) | 3 | `REVISING` | Rule #1 reinforced (count: 3) |
+| **3** | 1 | Rule #1 (`jargon_defined`) | **FAILED** (`jargon_defined`) | 3 | `NEEDS_HUMAN_REVIEW`* | Rule #1 reinforced (count: 3) |
 | **4** | 1 | Rule #1 (`jargon_defined`) | **PASSED (0 fails)** | **1** | **PASSED** | Rule #1 active (count: 3) |
-| **5** | 1 | Rule #1 (`jargon_defined`) | **FAILED** (`jargon_defined`) | 3 | `REVISING` | Rule #1 reinforced (count: 4) |
+| **5** | 1 | Rule #1 (`jargon_defined`) | **FAILED** (`jargon_defined`) | 3 | `NEEDS_HUMAN_REVIEW`* | Rule #1 reinforced (count: 4) |
 
+> \* **Status Label Bug Explanation**: In earlier telemetry logs, runs that reached the maximum retry limit ($2$) retained an intermediate node state label (`REVISING`) rather than the terminal label `NEEDS_HUMAN_REVIEW`. This has been resolved in `reflector_node`, ensuring that whenever retries are exhausted and the draft has not passed all 10 checks, the run status is correctly stamped `NEEDS_HUMAN_REVIEW`.
+>
 > **Scientific Note on Memory Telemetry**:  
-> As observed in a small sample ($N=5$), memory injection successfully supplies learned pedagogical priors into the drafting prompt. However, due to natural LLM sampling stochasticity, learned rules improve structural consistency but do not guarantee deterministic zero-shot convergence on every single generation attempt.
+> Across this 5-iteration live run, there is **no measurable improvement in this small sample ($N=5$)**. While memory injection successfully loaded and reinforced learned rules into the drafting prompt (specifically for `jargon_defined`), attempt-0 failures persisted across iterations 1, 2, 3, and 5. With a sample of $N=5$, prompt injection of learned rules alone does not guarantee zero-shot attempt-0 convergence against strict binary checks.
 
 ---
 

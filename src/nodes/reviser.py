@@ -66,13 +66,13 @@ Target Learner: 12th-grade graduate from India, non-English-medium background, l
 ### INSTRUCTIONS FOR SURGICAL REVISION:
 1. Fix ONLY the failed checks listed above.
 2. DO NOT rewrite the entire lesson from scratch. Preserve all sections that are already working well.
-3. If `accuracy` failed: remove any claims that RAG retrains model weights, and clarify that the model remains frozen while external notes are fetched.
+3. If `accuracy` failed: clarify that at answer time, new documents can be added without retraining the model. Also ensure any claim about hallucinations states that RAG reduces hallucinations rather than completely stopping or eliminating them.
 4. If `reading_level` failed:
    - Carefully review the measured metrics, the exact sentences over 15 words quoted in the diagnostic reason, and the listed multi-syllable non-glossary words.
    - Fix reading_level by splitting each of those specific long sentences into 2 or 3 short, punchy sentences (keep each sentence under 12-14 words).
    - Swap the identified multi-syllable non-glossary words for simple 1-syllable or 2-syllable everyday words (e.g. use "college office" instead of "university administration", "check" instead of "verification", "math numbers" instead of "mathematical calculations", "standard" instead of "traditional", "so" instead of "consequently").
    - Leave all passing sections completely unchanged.
-5. If `jargon_defined` failed: make sure every technical term is clearly defined in simple words right when it is first used.
+5. If `jargon_defined` failed: make sure every technical term is clearly defined in simple words right when it is first used. If terms like "high-dimensional", "indexes", or "similarity search" appear, replace them with plain words (e.g., "organizes for quick lookup", "finding chunks with matching ideas") or define them immediately in plain words.
 6. If `no_idioms` failed: replace idioms and slang with clear literal language.
 7. If `worked_example` failed: add or refine a step-by-step example set in an Indian college context (e.g. exam notice PDF chatbot).
 8. If `analogy` failed: add an intuitive everyday analogy (e.g. open-book exam vs closed-book test).

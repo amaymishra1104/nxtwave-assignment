@@ -39,6 +39,7 @@ GOLDEN_LESSON_PATH = Path("tests/good_lessons/good_rag_lesson.md")
 
 EXPECTED_FAILURES = {
     "bad_accuracy.md": "accuracy",
+    "bad_overclaim.md": "accuracy",
     "bad_what_why_how.md": "what_why_how",
     "bad_key_points.md": "key_points",
     "bad_jargon.md": "jargon_defined",

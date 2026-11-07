@@ -24,7 +24,7 @@ FAILURE_RULE_TEMPLATES = {
     "reading_level": "Write one single idea per sentence. Use very short sentences and simple everyday words so that non-English-medium high school graduates understand instantly.",
     "jargon_defined": "Define every specialized term (e.g. embeddings, chunking, vector database) with simple words right inside the first sentence it is introduced.",
     "no_idioms": "Use strictly literal language. Avoid all colloquial phrases or English idioms such as 'from scratch', 'silver bullet', or 'bite the bullet'.",
-    "accuracy": "Explicitly clarify that RAG does NOT retrain or alter model weights; the base model stays completely frozen while external text is fetched.",
+    "accuracy": "Clarify that at answer time, new documents can be added without retraining the model. Also state that RAG reduces hallucinations rather than completely eliminating them.",
     "worked_example": "Provide a concrete 3-step walkthrough set in an Indian college (e.g. a student asking an admission chatbot about an exam notice PDF).",
     "analogy": "Include the open-book exam analogy early in the lesson: comparing closed-book memorization with searching textbook pages during an exam.",
     "wrap_up": "Conclude the lesson with dedicated sections: a step-by-step '## Worked Example', a concise '## Summary', and a '## Self-Check' section containing exactly three numbered questions.",
@@ -38,6 +38,11 @@ def reflector_node(state: LessonState, store: Optional[MemoryStore] = None) -> D
     if store is None:
         store = MemoryStore()
 
+    # Ensure final state status reflects true certification outcome
+    best_attempt = state.get_best_attempt()
+    is_passed = bool(best_attempt and best_attempt.evaluation and best_attempt.evaluation.passed)
+    state.status = "passed" if is_passed else "needs_human_review"
+
     # 1. Persist run to SQLite memory store (marked with fault_injected if applicable)
     store.save_run(state)
 
@@ -48,6 +53,7 @@ def reflector_node(state: LessonState, store: Optional[MemoryStore] = None) -> D
             "Skipping rule extraction to prevent synthetic contamination of learned memory."
         )
         return {
+            "status": state.status,
             "learned_rules": store.get_top_active_rules(limit=settings.active_rules_limit),
         }
 
@@ -110,6 +116,7 @@ def reflector_node(state: LessonState, store: Optional[MemoryStore] = None) -> D
     # Return refreshed active learned rules
     active_rules = store.get_top_active_rules(limit=settings.active_rules_limit)
     return {
+        "status": state.status,
         "learned_rules": active_rules,
     }
 

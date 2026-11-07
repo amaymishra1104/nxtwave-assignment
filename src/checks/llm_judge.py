@@ -137,7 +137,8 @@ Target Learner: 12th-grade graduate from India, non-English-medium schooling bac
 ### CHECKPOINTS TO EVALUATE:
 1. `accuracy`:
    - pass=true only if ZERO statements contradict the Ground Truth Fact Pack.
-   - Hard fail if the lesson claims RAG retrains, updates, or modifies model weights.
+   - Hard fail if the lesson claims the model must be retrained to add new documents (the lesson must clarify that at answer time, new documents can be added without retraining the model).
+   - Hard fail if the lesson claims RAG completely stops, eliminates, or prevents all hallucinations or errors (fact pack fact_03 states RAG REDUCES hallucinations; it does not eliminate them).
 2. `what_why_how`:
    - pass=true only if all three are explicitly and clearly answered: What RAG is, Why it matters / why LLMs fail without it, and How it works end-to-end.
 3. `key_points`:

@@ -1,16 +1,26 @@
 {
   "version": "2.0.0-proposed",
-  "generated_at": "2026-11-07T14:28:19.162929",
+  "generated_at": "2026-11-07T17:09:56.229514",
   "proposed_by": "ReflectorNode",
   "changelog": [
-    "Enhanced jargon_defined criteria based on 16 historical occurrences: terms must be defined in the same initial clause."
+    "Clarified reading_level guidance based on 3 historical failures: recommend <= 12 words per sentence.",
+    "Enhanced jargon_defined criteria based on 19 historical occurrences: terms must be defined in the same initial clause."
   ],
   "historical_failure_statistics": {
-    "jargon_defined": 16,
-    "no_idioms": 1
+    "jargon_defined": 19,
+    "reading_level": 3,
+    "wrap_up": 1,
+    "worked_example": 1,
+    "what_why_how": 1,
+    "no_idioms": 1,
+    "key_points": 1,
+    "coherent_flow": 1
   },
   "active_learned_rules_applied": [
     "Define every specialized term (e.g. embeddings, chunking, vector database) with simple words right inside the first sentence it is introduced.",
+    "Write one single idea per sentence. Use very short sentences and simple everyday words so that non-English-medium high school graduates understand instantly.",
+    "Conclude the lesson with dedicated sections: a step-by-step '## Worked Example', a concise '## Summary', and a '## Self-Check' section containing exactly three numbered questions.",
+    "Provide a concrete 3-step walkthrough set in an Indian college (e.g. a student asking an admission chatbot about an exam notice PDF).",
     "Use strictly literal language. Avoid all colloquial phrases or English idioms such as 'from scratch', 'silver bullet', or 'bite the bullet'."
   ],
   "name": "Lesson Quality & Pedagogy Rubric for Beginner Learners (v2 Proposed)",
@@ -20,7 +30,7 @@
       "id": "accuracy",
       "name": "Factual Accuracy & Grounding",
       "type": "llm",
-      "description": "Zero statements contradict verified facts in data/fact_pack.json. The lesson must never state or suggest that RAG retrains, updates, or modifies the weights of the foundation language model."
+      "description": "Zero statements contradict verified facts in data/fact_pack.json. The lesson clarifies that at answer time, new documents can be added without retraining the model. The lesson must never state or imply that RAG completely stops or eliminates hallucinations (it only reduces them)."
     },
     {
       "id": "what_why_how",

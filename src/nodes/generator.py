@@ -64,12 +64,13 @@ def build_generator_prompt(state: LessonState) -> str:
    - Short sentences: Keep sentences short, crisp, and direct. Use full stops often.
    - Everyday words: Use simple, familiar high-school words. Avoid complex, formal, or multi-syllable vocabulary (e.g. use "college office" instead of "university administration", "check" instead of "verification", "math numbers" instead of "mathematical calculations", "standard" instead of "traditional").
    - No long chains of clauses: Never connect multiple ideas using conjunctions like "and", "which", "while", "whereas", or "consequently". Break them into separate standalone sentences.
-   - Explain each new term in a short separate sentence: When you first introduce any new technical term, immediately follow it with a short, standalone sentence that explains what it means in plain words before continuing.
+   - Explain each new term in a short separate sentence: When you first introduce any new technical term, immediately follow it with a short, standalone sentence that explains what it means in plain words before continuing. Avoid using unexplained technical terms like "high-dimensional", "indexes", or "similarity search"; if you mention them, define them immediately in plain words (e.g. "indexes means organizes for quick searching", "similarity search means finding chunks with matching ideas").
    - Beginner-friendly language: Never use Western idioms, colloquialisms, or buzzwords (e.g., avoid "bite the bullet", "hit the ground running", "silver bullet").
 2. Core Content:
    - Thoroughly explain: (1) What RAG is, (2) Why standard AI models need it (knowledge limits and hallucinations), and (3) How it works.
    - Explain all of these essential concepts: {concepts_str}.
-   - Never state or imply that RAG retrains, fine-tunes, or modifies the model's neural network weights.
+   - Explicitly clarify that at answer time, new documents can be added without retraining the model.
+   - Accurately state that RAG REDUCES hallucinations; NEVER claim that RAG stops, eliminates, or completely prevents hallucinations or errors.
 3. Teaching Tools:
    - Use an intuitive everyday analogy (e.g. taking an open-book exam with textbooks vs a closed-book memory test).
    - Walk through a concrete step-by-step worked example familiar in India (e.g. a college student asking an admission chatbot about an exam notice PDF circular).

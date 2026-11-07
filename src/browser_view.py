@@ -11,6 +11,7 @@ Opens automatically in the default web browser.
 
 import json
 from pathlib import Path
+import os
 import sqlite3
 import webbrowser
 from typing import Optional
@@ -152,7 +153,7 @@ def generate_html_dashboard(run_id: Optional[str] = None) -> Path:
           <div class="p-4 sm:p-6 grid grid-cols-1 md:grid-cols-4 gap-4 items-center hover:bg-slate-50 transition">
             <div class="font-bold text-slate-900 flex items-center gap-2"><span class="w-6 h-6 rounded-full bg-blue-100 text-blue-800 text-xs flex items-center justify-center font-bold">1</span> accuracy</div>
             <div class="text-xs text-purple-700 font-medium">LLM Judge (Fact Pack Anchor)</div>
-            <div class="text-sm text-slate-600 md:col-span-2">Factual fidelity to Lewis et al. (2020). Verifies model weights stay frozen and RAG never modifies weights.</div>
+            <div class="text-sm text-slate-600 md:col-span-2">Factual fidelity to Lewis et al. (2020). Verifies that at answer time, new documents can be added without retraining the model.</div>
           </div>
           <div class="p-4 sm:p-6 grid grid-cols-1 md:grid-cols-4 gap-4 items-center hover:bg-slate-50 transition">
             <div class="font-bold text-slate-900 flex items-center gap-2"><span class="w-6 h-6 rounded-full bg-blue-100 text-blue-800 text-xs flex items-center justify-center font-bold">2</span> what_why_how</div>
@@ -343,7 +344,14 @@ def open_dashboard_in_browser(run_id: Optional[str] = None):
     url = html_file.resolve().as_uri()
     print(f"\n[Browser Dashboard Generated]: {html_file.resolve()}")
     print(f"Opening in browser: {url}\n")
-    webbrowser.open(url)
+    try:
+        if os.name == "nt":
+            os.startfile(str(html_file.resolve()))
+        else:
+            webbrowser.open(url)
+    except Exception as e:
+        print(f"Direct launch fallback to webbrowser: {e}")
+        webbrowser.open(url)
     return html_file
 
 
@@ -351,3 +359,4 @@ if __name__ == "__main__":
     import sys
     rid = sys.argv[1] if len(sys.argv) > 1 else None
     open_dashboard_in_browser(run_id=rid)
+

@@ -7,7 +7,7 @@
       "id": "accuracy",
       "name": "Factual Accuracy & Grounding",
       "type": "llm",
-      "description": "Zero statements contradict verified facts in data/fact_pack.json. The lesson must never state or suggest that RAG retrains, updates, or modifies the weights of the foundation language model."
+      "description": "Zero statements contradict verified facts in data/fact_pack.json. The lesson clarifies that at answer time, new documents can be added without retraining the model. The lesson must never state or imply that RAG completely stops or eliminates hallucinations (it only reduces them)."
     },
     {
       "id": "what_why_how",

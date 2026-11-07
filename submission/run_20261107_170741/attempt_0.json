@@ -1,0 +1,73 @@
+{
+  "run_id": "20261107_170741",
+  "attempt_number": 0,
+  "passed": false,
+  "failing_checks": [
+    "jargon_defined",
+    "reading_level"
+  ],
+  "changes_made": null,
+  "checks": [
+    {
+      "check_id": "accuracy",
+      "passed": true,
+      "reason": "The lesson accurately describes RAG, correctly notes that it reduces rather than eliminates hallucinations, and clarifies that retraining is not required to add new documents.",
+      "evidence_quote": ""
+    },
+    {
+      "check_id": "what_why_how",
+      "passed": true,
+      "reason": "The lesson clearly defines what RAG is, explains why it is needed (hallucinations and knowledge cutoffs), and details the end-to-end process.",
+      "evidence_quote": ""
+    },
+    {
+      "check_id": "key_points",
+      "passed": true,
+      "reason": "All 8 mandatory concepts (retrieval, embeddings, vector database, chunking, augmenting the prompt, generation, hallucination reduction, and limitations) are explicitly covered.",
+      "evidence_quote": ""
+    },
+    {
+      "check_id": "jargon_defined",
+      "passed": false,
+      "reason": "[CIRCULAR DEFINITION] + [Section 2: Turning Words into Numbers using Embeddings] + [The definition of 'embeddings' uses the technical term 'semantic' and 'dense numerical vectors' without explaining them in simple enough terms for a zero-knowledge learner.]",
+      "evidence_quote": "Embeddings are dense numerical vectors representing the semantic meaning of text chunks, allowing distance metrics like cosine similarity to find topical matches."
+    },
+    {
+      "check_id": "reading_level",
+      "passed": false,
+      "reason": "Reading level grade (8.11) is too difficult for target beginner learner (exceeds target <= 7.0, failing by +1.11).\nExact sentences over 15 words to split (16 total):\n  - \"A vector database is a specialized storage system that organizes and stores embeddings to rapidly match and retrieve text chunks with similar meanings across millions of items.\" (27 words)\n  - \"Chunking means splitting a large source file into smaller semantic text pieces so passages fit within the model memory window and preserve search precision.\" (24 words)\n  - \"The Question: A student types a question into the college admission chatbot: \"What is the last date to submit our semester exam fees?\"\" (23 words)\n  - \"Key steps include chunking, creating embeddings, storing them in a vector database, retrieving relevant text, augmenting the prompt, and generating the final answer.\" (23 words)\n  - \"Embeddings are dense numerical vectors representing the semantic meaning of text chunks, allowing distance metrics like cosine similarity to find topical matches.\" (22 words)\nMulti-syllable non-glossary words to simplify: introduction, augmented, memory, computer, information, internal, memorized, however, limited, hallucinations, absolute, external.",
+      "evidence_quote": "A vector database is a specialized storage system that organizes and stores embeddings to rapidly match and retrieve text chunks with similar meanings across millions of items."
+    },
+    {
+      "check_id": "no_idioms",
+      "passed": true,
+      "reason": "The lesson is free of Western idioms and colloquialisms.",
+      "evidence_quote": ""
+    },
+    {
+      "check_id": "worked_example",
+      "passed": true,
+      "reason": "The lesson provides a clear, relatable example of a college admission chatbot in an Indian context.",
+      "evidence_quote": "Let us walk through a concrete example set in an India college."
+    },
+    {
+      "check_id": "analogy",
+      "passed": true,
+      "reason": "The lesson uses the open-book vs. closed-book exam analogy, which is highly intuitive for the target audience.",
+      "evidence_quote": "Retrieval-Augmented Generation works like an open-book exam for artificial intelligence."
+    },
+    {
+      "check_id": "coherent_flow",
+      "passed": true,
+      "reason": "The lesson follows a logical progression from the problem (closed-book) to the solution (RAG) and then breaks down the technical steps.",
+      "evidence_quote": ""
+    },
+    {
+      "check_id": "wrap_up",
+      "passed": true,
+      "reason": "Concludes with summary and exactly 3 conceptual self-check questions.",
+      "evidence_quote": ""
+    }
+  ],
+  "content": "# Introduction to Retrieval-Augmented Generation (RAG)\n\n## Introduction to AI Memory and the Closed-Book Exam Problem\n\nYou may have used smart computer chatbots. These computer models learn from large amounts of text. They store this learned information inside their internal memory weights. \n\nThis setup acts like a student writing a closed-book exam. The student must rely only on memorized facts. \n\nHowever, human memory is limited. Computer memory is also limited. Standard AI models have two major problems. \n\nFirst, they have a knowledge cutoff. They do not know facts about events that happened after their training finished. \n\nSecond, they suffer from hallucinations. Hallucination means the computer makes up false facts and presents them as the absolute truth. \n\nStandard AI models cannot check live external files. They just guess the next likely word. This guessing creates wrong answers.\n\n---\n\n## Everyday Analogy: The Open-Book College Exam\n\nThink about two ways to write a college test. \n\nMethod one is a closed-book test. You must write answers using only what is inside your head. If you forget a specific rule from the textbook, you might guess the answer. Sometimes, you write a wrong answer by mistake.\n\nMethod two is an open-book test. The teacher lets you bring the official textbook into the exam hall. When a question appears, you open the correct page. You read the exact rule. Then, you write your answer using those verified facts. \n\nRetrieval-Augmented Generation works like an open-book exam for artificial intelligence.\n\n---\n\n## What is RAG and Why We Need It\n\nRAG stands for Retrieval-Augmented Generation. Let us break down these big words into simple parts. \n\nRetrieval means searching through a pile of documents to find the right page. Augmented means adding extra information to help a task. Generation means creating a written answer. \n\nRAG connects a language model to an external folder of documents. The model no longer relies only on its closed memory. It searches through real documents before writing an answer. \n\nCrucially, you can add new documents to this external folder at answer time. You do not need to retrain the underlying computer model. This saves a lot of time and money.\n\n---\n\n## Step 1: Breaking Down Text with Chunking\n\nLarge documents are too big for a computer to read all at once. We must break them into smaller pieces. \n\nThis process is called chunking. Chunking means splitting a large source file into smaller semantic text pieces so passages fit within the model memory window and preserve search precision. \n\nEach piece contains a few sentences. These smaller pieces are called chunks.\n\n---\n\n## Step 2: Turning Words into Numbers using Embeddings\n\nComputers do not understand human words directly. Computers only understand numbers. \n\nWe use embeddings to solve this problem. Embeddings are dense numerical vectors representing the semantic meaning of text chunks, allowing distance metrics like cosine similarity to find topical matches. \n\nVector means a list of numbers. Semantic meaning means the core topic of the text. \n\nThe computer reads a text chunk. It converts those words into a long list of numbers. Chunks with similar meanings get number lists that look very similar to each other.\n\n---\n\n## Step 3: Storing Notes in a Vector Database\n\nAfter converting our text chunks into numbers, we need a place to save them. \n\nWe store them inside a vector database. A vector database is a specialized storage system that organizes and stores embeddings to rapidly match and retrieve text chunks with similar meanings across millions of items. \n\nThink of this database as a massive digital filing cabinet. It organizes all the number lists so the computer can search through them in a fraction of a second.\n\n---\n\n## Step 4: Finding the Right Info through Retrieval\n\nWhen a user asks a question, the computer starts the retrieval process. \n\nFirst, the computer converts the user's question into a list of numbers using embeddings. Next, it compares these question numbers against all the number lists inside the vector database. \n\nThis action is called similarity search. Similarity search means finding text chunks with matching ideas. \n\nThe system picks the top few chunks that match the user's question best. These selected chunks hold the exact facts needed for the answer.\n\n---\n\n## Step 5: Augmenting the Prompt with Retrieved Facts\n\nNow the computer has the user question and the retrieved text chunks. It combines them together. \n\nThis step is called prompt augmentation. Prompt augmentation means appending the most relevant retrieved passages directly into the prompt along with the user question before generation. \n\nThe computer builds a neat instruction package. It says: \"Here is the user question, and here are the exact reference facts from the document. Write an answer using only these facts.\"\n\n---\n\n## Step 6: Generation of Accurate Answers\n\nThe final step is generation. \n\nGeneration means the language model reads the augmented prompt and writes out a clear, fluent response for the user. \n\nBecause the model reads the exact source text, its answer stays grounded in reality. RAG significantly reduces factual hallucinations on knowledge-intensive tasks compared to pure parametric generation by grounding answers in retrieved source text. \n\nFurthermore, RAG provides direct source provenance and citations because the model references the explicit external documents used during generation.\n\n---\n\n## Worked Example: College Admission Chatbot\n\nLet us walk through a concrete example set in an India college. \n\n1. **The Question:** A student types a question into the college admission chatbot: \"What is the last date to submit our semester exam fees?\"\n2. **The Retrieval:** The system converts this question into numbers. It searches the vector database. It finds the exact PDF circular published by the college registrar yesterday. It pulls out the specific chunk that states: \"The final date for semester exam fee payment is August 15.\"\n3. **The Generation:** The chatbot combines the student question with this retrieved text chunk. It generates a helpful reply: \"According to the official circular, the final date for semester exam fee payment is August 15.\"\n\n---\n\n## Hallucination Reduction and System Limitations\n\nRAG brings huge benefits, but it also has strict limitations. \n\nFirst, we must remember a strict rule. RAG reduces hallucinations; it never completely stops or eliminates all errors. If the source document contains an error, the model might repeat that error. \n\nSecond, RAG suffers from a retrieval bottleneck. If the retrieval step fails to find the correct document chunk, the generator cannot provide the right answer. \n\nThird, searching external files adds latency. Latency means a short delay in computer response time while the system searches the database.\n\n---\n\n## Summary\n\n- RAG combines an AI model's internal memory with an external folder of documents.\n- It acts like an open-book exam where the computer checks reference books before answering.\n- New documents can be added at answer time without retraining the computer model.\n- Key steps include chunking, creating embeddings, storing them in a vector database, retrieving relevant text, augmenting the prompt, and generating the final answer.\n- RAG reduces factual hallucinations and provides direct citations, though it cannot eliminate all errors and can face retrieval bottlenecks.\n\n---\n\n## Self-Check Questions\n\n1. How does RAG differ from a closed-book AI memory model when answering questions about new documents?\n2. What is the role of a vector database in the RAG retrieval process?\n3. Does RAG completely stop or eliminate all hallucinations? Explain why or why not."
+}

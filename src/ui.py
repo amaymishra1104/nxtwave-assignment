@@ -24,7 +24,7 @@ console = Console()
 CHECK_METADATA = {
     "accuracy": {
         "type": "LLM Judge",
-        "description": "Factual alignment with Lewis et al. (frozen weights, no retraining)",
+        "description": "Factual alignment with Lewis et al. (new docs added without retraining)",
     },
     "what_why_how": {
         "type": "LLM Judge",

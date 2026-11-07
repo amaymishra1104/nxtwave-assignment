@@ -8,7 +8,7 @@ In an open-book test, the teacher allows you to keep your textbook open.
 You can search the book for the right page. 
 Then, you read the fact and write a clear, correct answer. 
 
-This open-book method is the big secret behind modern AI. 
+This open-book method is the core idea behind modern AI. 
 In this lesson, you will learn about a tool called RAG. 
 RAG stands for Retrieval-Augmented Generation. 
 It is a simple method that helps an AI look up facts in documents before it answers you. 
@@ -46,18 +46,17 @@ RAG combines two powerful steps:
 2. **Generation**: The process where an AI produces a natural language answer using its writing abilities. 
 
 Instead of asking the AI to guess from memory, RAG searches your private documents first. 
-Then, it hands the exact facts to the AI. 
+Then, it provides the exact facts to the AI. 
 Finally, the AI writes a polite, accurate response. 
 
-Most importantly, RAG does not retrain the AI. 
-It never changes the internal brain weights of the model. 
+Most importantly, in standard RAG, at answer time, new documents can be added without retraining the model. 
 You simply give fresh notes to the AI when a user asks a question. 
 
 ---
 
 ## 3. How RAG Works Step by Step
 
-Let us look under the hood. 
+Let us see how the system works step by step. 
 A RAG system follows four simple steps. 
 
 ### Step A: Chunking the Documents
@@ -83,7 +82,7 @@ When a student asks a question, the system converts that question into a vector 
 In milliseconds, the database finds the chunks that match the question. 
 
 ### Step D: Augmenting the Prompt and Generating the Answer
-Now comes the final magic. 
+Now comes the final step. 
 A prompt is the input question and instructions you give to an AI model. 
 The system takes the user question and adds the retrieved facts to it. 
 To augment means adding extra relevant facts into the prompt to help the AI answer accurately. 
@@ -104,7 +103,7 @@ Rahul types a question into the college website chatbot:
 
 > *"What is the last date to submit the exam form for regular students?"*
 
-Here is what happens behind the screen:
+Here is what happens step by step:
 
 1. **Retrieval in Action**: 
    The college chatbot does not guess. 
@@ -122,7 +121,7 @@ Here is what happens behind the screen:
    *"Dear student, as per official notice page 12, the last date to submit your exam form is November 15."*
 
 Rahul gets the exact date instantly. 
-The college never needed to spend lakhs of rupees retraining a custom AI model. 
+The college never needed to spend lakhs of rupees retraining a custom AI model.  
 
 ---
 
@@ -146,7 +145,7 @@ Here is what you learned today:
 * RAG gives the AI an open book of trusted external notes. 
 * Large documents are broken into chunks and stored as vectors in a vector database. 
 * The system retrieves the right facts and adds them to the user prompt. 
-* This method stops false guesses without expensive model retraining. 
+* This method reduces false guesses without expensive model retraining. 
 
 ---
 
