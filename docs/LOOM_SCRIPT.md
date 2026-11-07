@@ -47,6 +47,7 @@ This script provides a structured guide for recording the 15–20 minute face-vi
     - Generator drafting the lesson.
     - Evaluator running all 10 checks with the color-coded pass/fail grid.
   - "Here we see the system evaluate each check. All 10 checks pass, the lesson is approved, and the output is saved to `outputs/lesson.md`."
+  - *(Optional Tip)*: "You can also demonstrate instant UI replay without waiting on API latency using `python main.py --replay latest` to showcase the clean Rich grid and certification card."
 
 ### 4. Live Fault Injection Demonstration (10:00 – 14:00)
 * **Action**: In the terminal, run:
@@ -89,3 +90,4 @@ This script provides a structured guide for recording the 15–20 minute face-vi
 * **Talking Points**:
   - "Let's review the final generated lesson: simple vocabulary, open-book exam analogy, Indian college admissions chatbot example, 8 key concepts covered, and exactly 3 self-check questions."
   - "All deliverables—the GitHub repo, complete documentation, test suite, and final lesson document—are fully ready. Thank you!"
+

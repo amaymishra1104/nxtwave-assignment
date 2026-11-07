@@ -76,7 +76,7 @@ def build_generator_prompt(state: LessonState) -> str:
    - Define every technical term in plain words right when you first introduce it before using it again.
 4. Structure:
    - Use clean Markdown with clear headings (# and ##).
-   - Include a dedicated section for the Worked Example.
+   - Include a dedicated section with heading '## Worked Example' (e.g. ## Worked Example: College Admission Chatbot).
    - Include a concise Summary section at the end.
    - Conclude with a "Self-Check Questions" section containing EXACTLY three numbered questions testing understanding.
 5. Target Length: Approximately 800 to 1200 words.

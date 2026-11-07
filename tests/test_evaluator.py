@@ -7,8 +7,14 @@ catch-rate table showing both expected violations and any extra failing checks.
 
 import json
 from pathlib import Path
+import sys
 from unittest.mock import MagicMock
 import pytest
+
+# Ensure project root is in sys.path when executed directly
+project_root = Path(__file__).resolve().parent.parent
+if str(project_root) not in sys.path:
+    sys.path.insert(0, str(project_root))
 
 from src.checks.deterministic import (
     check_glossary_coverage,
@@ -80,11 +86,12 @@ def test_deterministic_bad_lessons():
     assert res_quiz.check_id == "wrap_up"
 
 
-def test_mocked_evaluator_catch_rate_table():
-    """Run all 8 bad lessons and 1 golden lesson against the Evaluator and print catch-rate table."""
+def run_catch_rate_suite(is_live: bool = False):
+    """Run all 8 bad lessons and 1 golden lesson against the Evaluator and print formatted table."""
     facts = load_facts()
     glossary = load_glossary()
 
+    mode_label = "LIVE EVALUATION - REAL GEMINI API" if is_live else "MOCKED EVALUATION - OFFLINE"
     results_table = []
     caught_count = 0
 
@@ -94,42 +101,44 @@ def test_mocked_evaluator_catch_rate_table():
         assert lesson_file.exists(), f"Test file {lesson_file} must exist"
         lesson_text = lesson_file.read_text(encoding="utf-8")
 
-        # Mock judge to return failure for the targeted check if qualitative
-        mock_client = MagicMock()
-        mock_checks = []
-        for cid in [
-            "accuracy",
-            "what_why_how",
-            "key_points",
-            "jargon_defined",
-            "no_idioms",
-            "worked_example",
-            "analogy",
-            "coherent_flow",
-            "wrap_up",
-        ]:
-            if cid == expected_check:
-                mock_checks.append(
-                    {
-                        "check_id": cid,
-                        "passed": False,
-                        "reason": f"Deliberate violation in {filename}",
-                        "evidence_quote": "",
-                    }
-                )
-            else:
-                mock_checks.append(
-                    {
-                        "check_id": cid,
-                        "passed": True,
-                        "reason": "OK",
-                        "evidence_quote": "",
-                    }
-                )
+        mock_client = None
+        if not is_live:
+            # Mock judge to return failure for the targeted check if qualitative
+            mock_client = MagicMock()
+            mock_checks = []
+            for cid in [
+                "accuracy",
+                "what_why_how",
+                "key_points",
+                "jargon_defined",
+                "no_idioms",
+                "worked_example",
+                "analogy",
+                "coherent_flow",
+                "wrap_up",
+            ]:
+                if cid == expected_check:
+                    mock_checks.append(
+                        {
+                            "check_id": cid,
+                            "passed": False,
+                            "reason": f"Deliberate violation in {filename}",
+                            "evidence_quote": "",
+                        }
+                    )
+                else:
+                    mock_checks.append(
+                        {
+                            "check_id": cid,
+                            "passed": True,
+                            "reason": "OK",
+                            "evidence_quote": "",
+                        }
+                    )
 
-        mock_client.models.generate_content.return_value = MagicMock(
-            text=json.dumps({"checks": mock_checks})
-        )
+            mock_client.models.generate_content.return_value = MagicMock(
+                text=json.dumps({"checks": mock_checks})
+            )
 
         state = LessonState(
             fact_pack=facts,
@@ -150,37 +159,40 @@ def test_mocked_evaluator_catch_rate_table():
                 "expected": expected_check,
                 "failing_checks": eval_result.failing_checks,
                 "caught": is_caught,
+                "eval_result": eval_result,
             }
         )
 
     # Test golden lesson
     golden_text = GOLDEN_LESSON_PATH.read_text(encoding="utf-8")
-    mock_client = MagicMock()
-    mock_client.models.generate_content.return_value = MagicMock(
-        text=json.dumps(
-            {
-                "checks": [
-                    {
-                        "check_id": cid,
-                        "passed": True,
-                        "reason": "OK",
-                        "evidence_quote": "",
-                    }
-                    for cid in [
-                        "accuracy",
-                        "what_why_how",
-                        "key_points",
-                        "jargon_defined",
-                        "no_idioms",
-                        "worked_example",
-                        "analogy",
-                        "coherent_flow",
-                        "wrap_up",
+    mock_client = None
+    if not is_live:
+        mock_client = MagicMock()
+        mock_client.models.generate_content.return_value = MagicMock(
+            text=json.dumps(
+                {
+                    "checks": [
+                        {
+                            "check_id": cid,
+                            "passed": True,
+                            "reason": "OK",
+                            "evidence_quote": "",
+                        }
+                        for cid in [
+                            "accuracy",
+                            "what_why_how",
+                            "key_points",
+                            "jargon_defined",
+                            "no_idioms",
+                            "worked_example",
+                            "analogy",
+                            "coherent_flow",
+                            "wrap_up",
+                        ]
                     ]
-                ]
-            }
+                }
+            )
         )
-    )
 
     state = LessonState(
         fact_pack=facts,
@@ -192,9 +204,9 @@ def test_mocked_evaluator_catch_rate_table():
 
     golden_passed = golden_result.passed and len(golden_result.failing_checks) == 0
 
-    # Print Formatted Catch-Rate Table per Requirement 6
+    # Print Formatted Catch-Rate Table per Requirement 1 & 6
     print("\n\n" + "=" * 90)
-    print("                EVALUATOR TEST SUITE: CATCH-RATE BENCHMARK TABLE")
+    print(f"       EVALUATOR TEST SUITE: CATCH-RATE BENCHMARK TABLE [{mode_label}]")
     print("=" * 90)
     print(f"{'Test Lesson File':<24} | {'Expected Check':<16} | {'Status':<10} | {'Extra Failing Checks'}")
     print("-" * 90)
@@ -204,15 +216,22 @@ def test_mocked_evaluator_catch_rate_table():
         extra_str = ", ".join(extra_checks) if extra_checks else "None"
         print(f"{r['file']:<24} | {r['expected']:<16} | {status_str:<10} | {extra_str}")
     print("-" * 90)
-    golden_status = "PASSED (10/10)" if golden_passed else "FAILED"
-    print(f"{'good_rag_lesson.md':<24} | {'(golden: all 10)':<16} | {golden_status:<10} | None (0 fails)")
+    golden_status = "PASSED (10/10)" if golden_passed else f"FAILED ({len(golden_result.failing_checks)} fails)"
+    golden_extra = ", ".join(golden_result.failing_checks) if golden_result.failing_checks else "None (0 fails)"
+    print(f"{'good_rag_lesson.md':<24} | {'(golden: all 10)':<16} | {golden_status:<10} | {golden_extra}")
     print("=" * 90)
 
     catch_rate = (caught_count / len(EXPECTED_FAILURES)) * 100
     print(f"Bad Lessons Caught: {caught_count}/{len(EXPECTED_FAILURES)} ({catch_rate:.1f}%)")
     print(f"Golden Lesson Pass: {'YES' if golden_passed else 'NO'}")
-    print("=" * 75 + "\n")
+    print("=" * 90 + "\n")
 
+    return results_table, golden_passed, caught_count
+
+
+def test_mocked_evaluator_catch_rate_table():
+    """Run all 8 bad lessons and 1 golden lesson against the Evaluator with mocks."""
+    results_table, golden_passed, caught_count = run_catch_rate_suite(is_live=False)
     assert caught_count == len(EXPECTED_FAILURES), "All 8 bad lessons must be caught by their target check"
     assert golden_passed is True, "Golden lesson must pass all 10 checks"
 
@@ -225,17 +244,13 @@ def test_live_evaluator_catch_rate_table():
     if not settings.gemini_api_key:
         pytest.skip("GEMINI_API_KEY not configured for live test")
 
-    facts = load_facts()
-    glossary = load_glossary()
+    results_table, golden_passed, caught_count = run_catch_rate_suite(is_live=True)
+    assert caught_count == len(EXPECTED_FAILURES), "All 8 bad lessons must be caught by live judge"
+    assert golden_passed is True, "Golden lesson must pass all 10 checks on live judge"
 
-    # Run bad accuracy with live judge
-    text_acc = (BAD_LESSONS_DIR / "bad_accuracy.md").read_text(encoding="utf-8")
-    state = LessonState(
-        fact_pack=facts,
-        glossary=glossary,
-        attempts=[LessonAttempt(attempt_number=0, content=text_acc)],
-    )
-    eval_out = evaluator_node(state)
-    eval_result = eval_out["attempts"][0].evaluation
-    assert "accuracy" in eval_result.failing_checks
+
+if __name__ == "__main__":
+    import sys
+    is_live_flag = "--live" in sys.argv
+    run_catch_rate_suite(is_live=is_live_flag)
 

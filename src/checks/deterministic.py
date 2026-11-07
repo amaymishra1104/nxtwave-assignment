@@ -315,7 +315,7 @@ def check_required_structure(text: str) -> CheckResult:
     has_headings = len(re.findall(r"^\s*##\s+.+", text, flags=re.MULTILINE)) >= 3
     has_example = bool(
         re.search(
-            r"(?i)(?:worked example|real-world example|step-by-step example|example in action)",
+            r"(?i)(?:worked example|real-world example|step-by-step example|example in action|walkthrough|scenario:)",
             text,
         )
     )

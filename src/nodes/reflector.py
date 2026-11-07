@@ -21,13 +21,13 @@ logger = logging.getLogger(__name__)
 
 # Heuristic rule templates for common failure modes
 FAILURE_RULE_TEMPLATES = {
-    "reading_level": "Keep all sentences very short (strictly under 12 words) and use everyday high-school vocabulary to maintain Grade <= 7 readability.",
+    "reading_level": "Write one single idea per sentence. Use very short sentences and simple everyday words so that non-English-medium high school graduates understand instantly.",
     "jargon_defined": "Define every specialized term (e.g. embeddings, chunking, vector database) with simple words right inside the first sentence it is introduced.",
     "no_idioms": "Use strictly literal language. Avoid all colloquial phrases or English idioms such as 'from scratch', 'silver bullet', or 'bite the bullet'.",
     "accuracy": "Explicitly clarify that RAG does NOT retrain or alter model weights; the base model stays completely frozen while external text is fetched.",
     "worked_example": "Provide a concrete 3-step walkthrough set in an Indian college (e.g. a student asking an admission chatbot about an exam notice PDF).",
     "analogy": "Include the open-book exam analogy early in the lesson: comparing closed-book memorization with searching textbook pages during an exam.",
-    "wrap_up": "Conclude the lesson with a key summary and exactly three numbered questions in the Self-Check section.",
+    "wrap_up": "Conclude the lesson with dedicated sections: a step-by-step '## Worked Example', a concise '## Summary', and a '## Self-Check' section containing exactly three numbered questions.",
 }
 
 

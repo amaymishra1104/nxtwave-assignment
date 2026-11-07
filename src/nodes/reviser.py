@@ -76,7 +76,10 @@ Target Learner: 12th-grade graduate from India, non-English-medium background, l
 6. If `no_idioms` failed: replace idioms and slang with clear literal language.
 7. If `worked_example` failed: add or refine a step-by-step example set in an Indian college context (e.g. exam notice PDF chatbot).
 8. If `analogy` failed: add an intuitive everyday analogy (e.g. open-book exam vs closed-book test).
-9. If `wrap_up` failed: ensure there is a clear summary and EXACTLY three numbered questions in the Self-Check section.
+9. If `wrap_up` failed:
+   - Ensure the lesson has a dedicated section with heading '## Worked Example'.
+   - Ensure there is a concise '## Summary' section.
+   - Ensure the lesson concludes with a '## Self-Check' section containing EXACTLY three numbered questions (1., 2., 3.).
 
 Return a JSON object containing:
 - `changes_made`: A bulleted summary explicitly naming each failed check and explaining what surgical edits were made.

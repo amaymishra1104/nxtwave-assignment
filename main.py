@@ -51,18 +51,30 @@ def main():
         action="store_true",
         help="Run 3 iterations to demonstrate memory rule learning and application",
     )
+    parser.add_argument(
+        "--replay",
+        type=str,
+        default=None,
+        help="Re-render Rich CLI presentation for a saved run ID (or 'latest') without making API calls",
+    )
 
     args = parser.parse_args()
 
-    print("\n=======================================================")
-    print("   GENAI CONTENT SYSTEMS: LESSON GENERATOR & EVALUATOR ")
-    print("=======================================================")
-    print(f"Topic:       {args.topic}")
-    print(f"Target:      12th-grade graduate from India (non-English medium)")
-    print(f"Max Retries: {args.max_retries}")
-    if args.inject_fault:
-        print(f"Fault Hook:  {args.inject_fault} (Attempt 0)")
-    print("=======================================================\n")
+    if args.replay:
+        from src.ui import replay_saved_run
+        replay_saved_run(args.replay)
+        return
+
+    from src.ui import render_banner, render_attempt_grid, render_final_card
+    render_banner(
+        topic=args.topic,
+        max_retries=args.max_retries,
+        fault_hook=args.inject_fault,
+        generator_model=settings.generator_model,
+        judge_model=settings.judge_model,
+    )
+
+    graph = build_lesson_graph()
 
     if args.demo_evolution:
         print("\n>>> DEMO EVOLUTION MODE ACTIVATED (Amendment 9) <<<")
@@ -70,6 +82,7 @@ def main():
 
         from src.memory.store import MemoryStore
         store = MemoryStore()
+        history = []
 
         for iteration in range(1, 4):
             print(f"\n=======================================================")
@@ -79,10 +92,15 @@ def main():
             # Check rules before run
             active_rules_before = store.get_top_active_rules(limit=5)
             print(f"[Run {iteration}] Active Rules Loaded from Memory ({len(active_rules_before)}):")
-            for r in active_rules_before:
-                print(f"  * {r}")
+            for idx, r in enumerate(active_rules_before, 1):
+                print(f"  {idx}. {r}")
             if not active_rules_before:
                 print("  (None yet - cold start)")
+
+            if iteration > 1:
+                print(f"\n[Run {iteration}] Exact Rules Injected into Generator Prompt:")
+                for idx, r in enumerate(active_rules_before, 1):
+                    print(f"    • {r}")
 
             state = LessonState(
                 topic=args.topic,
@@ -94,17 +112,33 @@ def main():
             final_state = LessonState(**final_state_dict) if isinstance(final_state_dict, dict) else final_state_dict
             save_run_outputs(final_state)
 
-            # Check rules after run
-            active_rules_after = store.get_top_active_rules(limit=5)
-            print(f"\n[Run {iteration} Finished] Memory Updated:")
-            print(f"  Total Attempts: {len(final_state.attempts)}")
-            print(f"  Active Rules in Memory Now ({len(active_rules_after)}):")
-            for r in active_rules_after:
-                print(f"  + {r}")
+            # Inspect SQLite table
+            import sqlite3
+            conn = sqlite3.connect(store.db_path)
+            cursor = conn.cursor()
+            cursor.execute("SELECT id, source_check_id, failure_count, active, rule_text FROM learned_rules ORDER BY failure_count DESC, id ASC")
+            db_rows = cursor.fetchall()
+            conn.close()
+
+            print(f"\n[Run {iteration} Finished] SQLite `learned_rules` Table ({len(db_rows)} rows):")
+            for row in db_rows:
+                active_flag = "ACTIVE" if row[3] else "INACTIVE"
+                print(f"  [ID {row[0]}] Check: {row[1]:<15} | Count: {row[2]} | {active_flag:<8} | Rule: {row[4][:65]}...")
+
+            att0 = final_state.attempts[0] if final_state.attempts else None
+            att0_fails = att0.evaluation.failing_checks if (att0 and att0.evaluation) else []
+            history.append((iteration, att0_fails))
+            print(f"  Attempt 0 Status: {'PASSED' if not att0_fails else f'FAILED ({len(att0_fails)} failing: {att0_fails})'}")
+            print(f"  Total Attempts:   {len(final_state.attempts)}")
+            print(f"  Final Verdict:    {final_state.status.upper()}")
 
         print("\n=======================================================")
-        print("        DEMO EVOLUTION COMPLETED SUCCESSFULLY")
-        print(f"Active Rules Capped at 5 (Deduplicated)")
+        print("        DEMO EVOLUTION SUMMARY (ATTEMPT-0 PROGRESSION)")
+        print("=======================================================")
+        for it, fails in history:
+            status_text = "PASSED (0 fails)" if not fails else f"FAILED ({len(fails)} failing: {fails})"
+            print(f"  Iteration {it}: Attempt 0 -> {status_text}")
+        print(f"\nActive Rules Capped at 5 (Deduplicated)")
         print(f"Proposed Rubric: {settings.rubric_v2_proposed_path}")
         print("=======================================================\n")
         return
@@ -114,8 +148,6 @@ def main():
         max_retries=args.max_retries,
         fault_to_inject=args.inject_fault,
     )
-
-    graph = build_lesson_graph()
 
     logger.info("Starting autonomous LangGraph execution...")
     try:
@@ -129,37 +161,30 @@ def main():
         # Save all output files
         lesson_file = save_run_outputs(final_state)
 
-        # Print plain terminal summary (Rich UI comes in M7)
-        print("\n----------------- EXECUTION SUMMARY -----------------")
-        print(f"Run ID:         {final_state.run_id}")
-        print(f"Total Attempts: {len(final_state.attempts)}")
+        # Render visual Rich UI
+        best_attempt = final_state.get_best_attempt()
+        best_num = best_attempt.attempt_number if best_attempt else 0
+        fewest_fails = len(best_attempt.evaluation.failing_checks) if (best_attempt and best_attempt.evaluation) else 0
 
         for a in final_state.attempts:
-            status_str = (
-                "PASSED (10/10)"
-                if (a.evaluation and a.evaluation.passed)
-                else "FAILED"
+            checks_list = [c.model_dump() for c in (a.evaluation.checks if a.evaluation else [])]
+            failing_list = a.evaluation.failing_checks if a.evaluation else []
+            render_attempt_grid(
+                attempt_num=a.attempt_number,
+                total_attempts=len(final_state.attempts),
+                checks=checks_list,
+                failing_checks=failing_list,
+                changes_made=a.changes_made,
             )
-            failing = (
-                f" (Failing: {', '.join(a.evaluation.failing_checks)})"
-                if (a.evaluation and a.evaluation.failing_checks)
-                else ""
-            )
-            print(f"  Attempt {a.attempt_number}: {status_str}{failing}")
-            if a.changes_made:
-                print(f"    Changes: {a.changes_made[:120]}...")
 
-        print("-----------------------------------------------------")
-        final_status = (
-            "PASSED & READY TO SHIP"
-            if final_state.status == "passed"
-            else "NEEDS HUMAN REVIEW (Best Attempt Selected)"
+        render_final_card(
+            run_id=final_state.run_id,
+            status=final_state.status,
+            attempts_count=len(final_state.attempts),
+            best_attempt_num=best_num,
+            failing_count=fewest_fails,
+            lesson_path=lesson_file,
         )
-        print(f"FINAL VERDICT:  {final_status}")
-        print(f"Lesson File:    {lesson_file}")
-        print(f"Rejection Log:  {settings.output_dir / 'rejection_log.json'}")
-        print(f"Markdown Audit: {settings.output_dir / 'rejection_log.md'}")
-        print("-----------------------------------------------------\n")
 
     except Exception as e:
         logger.error(f"Execution failed: {e}", exc_info=True)
