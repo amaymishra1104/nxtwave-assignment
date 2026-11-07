@@ -1,0 +1,5 @@
+# Demo Video Session Chapter Timeline
+# Session Start: 2026-11-07 22:45:22
+# Format: Segment <id>: <name> | Start: MM:SS | End: MM:SS | Duration: MM:SS | Status: <status>
+
+Segment 2: Deliberate error caught | Start: 00:00 | End: 01:14 | Duration: 01:14 | Status: ok
